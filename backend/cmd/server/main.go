@@ -9,9 +9,12 @@ import (
 
 	"equran/backend/internal/cache"
 	"equran/backend/internal/config"
+	"equran/backend/internal/doa"
 	"equran/backend/internal/handler"
 	"equran/backend/internal/middleware"
+	"equran/backend/internal/prayer"
 	"equran/backend/internal/quran"
+	"equran/backend/internal/tajwid"
 )
 
 func main() {
@@ -20,11 +23,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	quranSvc := quran.NewService(quran.NewClient(cfg.EquranBaseURL), cache.New(), cfg.CacheTTL)
+	store := cache.New()
+	quranSvc := quran.NewService(quran.NewClient(cfg.EquranBaseURL), store, cfg.CacheTTL)
+	prayerSvc := prayer.NewService(prayer.NewClient(cfg.EquranBaseURL), store, cfg.CacheTTL)
+	doaSvc := doa.NewService(doa.NewClient(cfg.DoaBaseURL), store, cfg.CacheTTL)
+	tajwidSvc := tajwid.NewService(tajwid.NewClient(cfg.UmmahBaseURL), store, cfg.CacheTTL)
 
 	router := handler.NewRouter(
 		handler.NewQuranHandler(quranSvc),
 		handler.NewHijriHandler(cfg.HijriOffset, cfg.Location),
+		handler.NewPrayerHandler(prayerSvc, cfg.Location),
+		handler.NewDoaHandler(doaSvc),
+		handler.NewFastingHandler(cfg.HijriOffset),
+		handler.NewTajwidHandler(tajwidSvc),
 	)
 	app := middleware.Chain(router,
 		middleware.Recover,

@@ -4,152 +4,173 @@ info:
   version: 0.1.0
   description: |
     Kontrak API backend e-Quran untuk frontend Vue.
-    Rilis: V1 = surah, jadwal sholat, kalender Hijriyah | V2 = audio, tafsir, adzan, puasa |
-    V3 = akun, tilawah, pencarian | V4 = kiblat, dzikir, doa, hafalan | V5 = tajwid, kuis, asbabun nuzul.
+    Rilis: V1 = surah, jadwal sholat, kalender Hijriyah | V2 = audio, tafsir, puasa |
+    V3 = pencarian ayat | V4 = hafalan | V5 = tajwid, kuis, asbabun nuzul.
+    Proyek ini TANPA LOGIN: penanda, catatan, tilawah, hafalan, dan kuis disimpan di browser (tanpa endpoint).
     Sumber data: surah/tafsir/audio dari equran.id (v2, di-cache backend); fitur lain
     memakai data sendiri atau sumber yang masih perlu diverifikasi (ditandai x-source).
 servers:
   - url: http://localhost:8080/api/v1
 tags:
-  - {name: Auth}
-  - {name: Quran}
-  - {name: Search}
-  - {name: Prayer}
-  - {name: Hijri}
-  - {name: Reminder}
-  - {name: User}
-  - {name: Tilawah}
-  - {name: Dzikir & Doa}
-  - {name: Learn}
-  - {name: Admin}
+  - { name: Quran }
+  - { name: Search }
+  - { name: Prayer }
+  - { name: Hijri }
+  - { name: Reminder }
+  - { name: Dzikir & Doa }
+  - { name: Learn }
 components:
   securitySchemes:
-    bearer: {type: http, scheme: bearer, bearerFormat: JWT}
+    bearer: { type: http, scheme: bearer, bearerFormat: JWT }
   parameters:
-    Nomor: {name: nomor, in: path, required: true, schema: {type: integer, minimum: 1, maximum: 114}}
-    Ayat: {name: ayat, in: path, required: true, schema: {type: integer, minimum: 1}}
-    Id: {name: id, in: path, required: true, schema: {type: string}}
-    Page: {name: page, in: query, schema: {type: integer, default: 1}}
-    Limit: {name: limit, in: query, schema: {type: integer, default: 20, maximum: 100}}
-    Lat: {name: lat, in: query, required: true, schema: {type: number}}
-    Lng: {name: lng, in: query, required: true, schema: {type: number}}
-    Year: {name: year, in: query, required: true, schema: {type: integer}}
-    Month: {name: month, in: query, required: true, schema: {type: integer, minimum: 1, maximum: 12}}
+    Nomor:
+      {
+        name: nomor,
+        in: path,
+        required: true,
+        schema: { type: integer, minimum: 1, maximum: 114 },
+      }
+    Ayat:
+      {
+        name: ayat,
+        in: path,
+        required: true,
+        schema: { type: integer, minimum: 1 },
+      }
+    Id: { name: id, in: path, required: true, schema: { type: string } }
+    Page: { name: page, in: query, schema: { type: integer, default: 1 } }
+    Limit:
+      {
+        name: limit,
+        in: query,
+        schema: { type: integer, default: 20, maximum: 100 },
+      }
+    Lat: { name: lat, in: query, required: true, schema: { type: number } }
+    Lng: { name: lng, in: query, required: true, schema: { type: number } }
+    Year: { name: year, in: query, required: true, schema: { type: integer } }
+    Month:
+      {
+        name: month,
+        in: query,
+        required: true,
+        schema: { type: integer, minimum: 1, maximum: 12 },
+      }
   responses:
-    Ok: {description: Berhasil, content: {application/json: {schema: {$ref: '#/components/schemas/Envelope'}}}}
-    Created: {description: Dibuat, content: {application/json: {schema: {$ref: '#/components/schemas/Envelope'}}}}
-    NoContent: {description: Berhasil tanpa isi}
-    Unauthorized: {description: Token tidak ada/tidak valid}
-    NotFound: {description: Tidak ditemukan}
+    Ok:
+      {
+        description: Berhasil,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Envelope" } },
+          },
+      }
+    Created:
+      {
+        description: Dibuat,
+        content:
+          {
+            application/json:
+              { schema: { $ref: "#/components/schemas/Envelope" } },
+          },
+      }
+    NoContent: { description: Berhasil tanpa isi }
+    Unauthorized: { description: Token tidak ada/tidak valid }
+    NotFound: { description: Tidak ditemukan }
   schemas:
     Envelope:
       type: object
       properties:
         data: {}
-        error: {type: string, nullable: true}
+        error: { type: string, nullable: true }
     Credentials:
       type: object
       required: [email, password]
       properties:
-        name: {type: string}
-        email: {type: string, format: email}
-        password: {type: string, minLength: 8}
+        name: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
     Surah:
       type: object
       properties:
-        nomor: {type: integer}
-        nama: {type: string}
-        namaLatin: {type: string}
-        jumlahAyat: {type: integer}
-        tempatTurun: {type: string}
-        arti: {type: string}
-        deskripsi: {type: string}
-        audioFull: {type: object, additionalProperties: {type: string}, description: 'ID qari 01-06 -> URL'}
+        nomor: { type: integer }
+        nama: { type: string }
+        namaLatin: { type: string }
+        jumlahAyat: { type: integer }
+        tempatTurun: { type: string }
+        arti: { type: string }
+        deskripsi: { type: string }
+        audioFull:
+          {
+            type: object,
+            additionalProperties: { type: string },
+            description: "ID qari 01-06 -> URL",
+          }
     Ayah:
       type: object
       properties:
-        nomorAyat: {type: integer}
-        teksArab: {type: string}
-        teksLatin: {type: string}
-        teksIndonesia: {type: string}
-        audio: {type: object, additionalProperties: {type: string}}
+        nomorAyat: { type: integer }
+        teksArab: { type: string }
+        teksLatin: { type: string }
+        teksIndonesia: { type: string }
+        audio: { type: object, additionalProperties: { type: string } }
     Bookmark:
       type: object
       properties:
-        id: {type: string}
-        surah: {type: integer}
-        ayat: {type: integer}
-        createdAt: {type: string, format: date-time}
+        id: { type: string }
+        surah: { type: integer }
+        ayat: { type: integer }
+        createdAt: { type: string, format: date-time }
     Note:
       type: object
       properties:
-        id: {type: string}
-        surah: {type: integer}
-        ayat: {type: integer}
-        text: {type: string}
+        id: { type: string }
+        surah: { type: integer }
+        ayat: { type: integer }
+        text: { type: string }
     ReminderSettings:
       type: object
       properties:
-        cityId: {type: string}
-        method: {type: string, example: kemenag}
+        cityId: { type: string }
+        method: { type: string, example: kemenag }
         prayers:
           type: object
-          description: 'subuh, dzuhur, ashar, maghrib, isya'
+          description: "subuh, dzuhur, ashar, maghrib, isya"
           additionalProperties:
             type: object
             properties:
-              enabled: {type: boolean}
-              minutesBefore: {type: integer, default: 0}
+              enabled: { type: boolean }
+              minutesBefore: { type: integer, default: 0 }
     PushSubscription:
       type: object
       required: [endpoint, keys]
       properties:
-        endpoint: {type: string}
+        endpoint: { type: string }
         keys:
           type: object
-          properties: {p256dh: {type: string}, auth: {type: string}}
+          properties: { p256dh: { type: string }, auth: { type: string } }
     UserSettings:
       type: object
       properties:
-        theme: {type: string, enum: [light, dark, system]}
-        arabicFontSize: {type: integer}
-        qari: {type: string, example: '01'}
-        showLatin: {type: boolean}
-        showTranslation: {type: boolean}
-        language: {type: string, enum: [id, en]}
+        theme: { type: string, enum: [light, dark, system] }
+        arabicFontSize: { type: integer }
+        qari: { type: string, example: "01" }
+        showLatin: { type: boolean }
+        showTranslation: { type: boolean }
+        language: { type: string, enum: [id, en] }
     TilawahTarget:
       type: object
       properties:
-        startDate: {type: string, format: date}
-        targetDays: {type: integer, description: 'mis. 30 untuk khatam sebulan'}
+        startDate: { type: string, format: date }
+        targetDays:
+          { type: integer, description: "mis. 30 untuk khatam sebulan" }
 paths:
   /health:
-    get: {summary: Cek status server, responses: {'200': {$ref: '#/components/responses/Ok'}}}
-
-  # ---------- Auth (V3) ----------
-  /auth/register:
-    post:
-      tags: [Auth]
-      summary: Daftar akun (V3)
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Credentials'}}}}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
-  /auth/login:
-    post:
-      tags: [Auth]
-      summary: Login, mengembalikan access + refresh token (V3)
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Credentials'}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}, '401': {$ref: '#/components/responses/Unauthorized'}}
-  /auth/refresh:
-    post:
-      tags: [Auth]
-      summary: Perbarui access token (V3)
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /me:
     get:
-      tags: [Auth]
-      summary: Profil user (V3)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      {
+        summary: Cek status server,
+        responses: { "200": { $ref: "#/components/responses/Ok" } },
+      }
 
   # ---------- Quran ----------
   /surahs:
@@ -157,57 +178,66 @@ paths:
       tags: [Quran]
       summary: Daftar 114 surah, filter nama dengan q (V1)
       x-source: equran.id GET /api/v2/surat (di-cache)
-      parameters: [{name: q, in: query, schema: {type: string}}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      parameters: [{ name: q, in: query, schema: { type: string } }]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /surahs/{nomor}:
     get:
       tags: [Quran]
       summary: Detail surah + ayat + audio per qari (V1 teks, V2 audio)
       x-source: equran.id GET /api/v2/surat/{nomor}
-      parameters: [{$ref: '#/components/parameters/Nomor'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}, '404': {$ref: '#/components/responses/NotFound'}}
+      parameters: [{ $ref: "#/components/parameters/Nomor" }]
+      responses:
+        {
+          "200": { $ref: "#/components/responses/Ok" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        }
   /surahs/{nomor}/tafsir:
     get:
       tags: [Quran]
       summary: Tafsir seluruh ayat dalam satu surah (V2)
       x-source: equran.id GET /api/v2/tafsir/{nomor}
-      parameters: [{$ref: '#/components/parameters/Nomor'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /surahs/{nomor}/ayahs/{ayat}/tafsir:
-    get:
-      tags: [Quran]
-      summary: Tafsir satu ayat (V2)
-      parameters: [{$ref: '#/components/parameters/Nomor'}, {$ref: '#/components/parameters/Ayat'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      parameters: [{ $ref: "#/components/parameters/Nomor" }]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /surahs/{nomor}/ayahs/{ayat}/asbabun-nuzul:
     get:
       tags: [Learn]
       summary: Latar turunnya ayat (V5)
       x-source: PERLU sumber data + lisensi
-      parameters: [{$ref: '#/components/parameters/Nomor'}, {$ref: '#/components/parameters/Ayat'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}, '404': {$ref: '#/components/responses/NotFound'}}
+      parameters:
+        [
+          { $ref: "#/components/parameters/Nomor" },
+          { $ref: "#/components/parameters/Ayat" },
+        ]
+      responses:
+        {
+          "200": { $ref: "#/components/responses/Ok" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        }
   /surahs/{nomor}/tajwid:
     get:
       tags: [Learn]
-      summary: Teks Arab dengan penanda hukum tajwid per ayat (V5)
-      x-source: PERLU dataset tajwid
-      parameters: [{$ref: '#/components/parameters/Nomor'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      summary: Teks Arab per ayat dengan penanda hukum tajwid (potongan teks + nama hukum)
+      x-source: UmmahAPI GET /api/quran/surah/{n}?script=tajweed (diparse dan di-cache di backend)
+      parameters: [{ $ref: "#/components/parameters/Nomor" }]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /ayahs/random:
     get:
       tags: [Quran]
       summary: Ayat acak dengan konteks surah (V3)
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /ayahs/daily:
     get:
       tags: [Quran]
-      summary: Ayat harian (sama untuk semua user pada tanggal yang sama) (V3)
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      summary: Ayat harian (sama untuk semua pengguna pada tanggal yang sama)
+      description: Dipilih deterministik dari seluruh ayat berdasarkan tanggal. Tanpa date dipakai tanggal hari ini (WIB).
+      parameters:
+        [{ name: date, in: query, schema: { type: string, format: date } }]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /qaris:
     get:
       tags: [Quran]
       summary: Daftar qari (ID 01-06) untuk pilihan audio (V2)
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
 
   # ---------- Search (V3) ----------
   /search/ayahs:
@@ -215,326 +245,213 @@ paths:
       tags: [Search]
       summary: Cari ayat berdasarkan kata di terjemahan atau teks Arab (V3)
       parameters:
-        - {name: q, in: query, required: true, schema: {type: string, minLength: 2}}
-        - {name: scope, in: query, schema: {type: string, enum: [translation, arabic], default: translation}}
-        - {$ref: '#/components/parameters/Page'}
-        - {$ref: '#/components/parameters/Limit'}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+        - {
+            name: q,
+            in: query,
+            required: true,
+            schema: { type: string, minLength: 2 },
+          }
+        - {
+            name: scope,
+            in: query,
+            schema:
+              {
+                type: string,
+                enum: [translation, arabic],
+                default: translation,
+              },
+          }
+        - { $ref: "#/components/parameters/Page" }
+        - { $ref: "#/components/parameters/Limit" }
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
 
   # ---------- Prayer (V1) ----------
+  /prayer/provinces:
+    get:
+      tags: [Prayer]
+      summary: Daftar provinsi yang punya jadwal sholat (V1)
+      x-source: equran.id GET /api/v2/shalat/provinsi (data Bimas Islam Kemenag RI)
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /prayer/cities:
     get:
       tags: [Prayer]
-      summary: Cari kota/kabupaten (V1)
-      x-source: PERLU diverifikasi (API jadwal sholat publik atau dataset sendiri)
-      parameters: [{name: q, in: query, required: true, schema: {type: string}}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      summary: Daftar kabupaten/kota dalam satu provinsi (V1)
+      x-source: equran.id POST /api/v2/shalat/kabkota
+      parameters:
+        - {
+            name: provinsi,
+            in: query,
+            required: true,
+            schema: { type: string },
+          }
+      responses:
+        {
+          "200": { $ref: "#/components/responses/Ok" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        }
   /prayer/times:
     get:
       tags: [Prayer]
-      summary: Jadwal sholat harian atau bulanan (V1)
-      description: Beri cityId ATAU lat+lng. Tanpa date = hari ini; month+year = sebulan penuh.
+      summary: Jadwal sholat sebulan, atau satu hari jika date diisi (V1)
+      description: |
+        Wilayah dipilih lewat nama provinsi dan kabkota persis seperti dari /prayer/cities.
+        Tanpa year/month/date = bulan berjalan. Waktu berformat HH:mm menurut zona waktu wilayah.
+        "Sholat berikutnya" dan hitung mundur dihitung di frontend (zona waktu wilayah tidak disediakan sumber data).
+      x-source: equran.id POST /api/v2/shalat
       parameters:
-        - {name: cityId, in: query, schema: {type: string}}
-        - {name: lat, in: query, schema: {type: number}}
-        - {name: lng, in: query, schema: {type: number}}
-        - {name: date, in: query, schema: {type: string, format: date}}
-        - {name: month, in: query, schema: {type: integer}}
-        - {name: year, in: query, schema: {type: integer}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /prayer/next:
-    get:
-      tags: [Prayer]
-      summary: Waktu sholat berikutnya + sisa detik (V1)
-      parameters:
-        - {name: cityId, in: query, required: true, schema: {type: string}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+        - {
+            name: provinsi,
+            in: query,
+            required: true,
+            schema: { type: string },
+          }
+        - { name: kabkota, in: query, required: true, schema: { type: string } }
+        - { name: year, in: query, schema: { type: integer } }
+        - {
+            name: month,
+            in: query,
+            schema: { type: integer, minimum: 1, maximum: 12 },
+          }
+        - { name: date, in: query, schema: { type: string, format: date } }
+      responses:
+        {
+          "200": { $ref: "#/components/responses/Ok" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        }
   /qibla:
     get:
       tags: [Prayer]
       summary: Sudut arah kiblat dari koordinat (V4)
-      parameters: [{$ref: '#/components/parameters/Lat'}, {$ref: '#/components/parameters/Lng'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      parameters:
+        [
+          { $ref: "#/components/parameters/Lat" },
+          { $ref: "#/components/parameters/Lng" },
+        ]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
 
   # ---------- Hijri (V1, V2) ----------
   /hijri/today:
     get:
       tags: [Hijri]
       summary: Tanggal Hijriyah hari ini, termasuk offset koreksi (V1)
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /hijri/calendar:
     get:
       tags: [Hijri]
       summary: Kalender bulanan Masehi + Hijriyah + hari besar (V1)
-      parameters: [{$ref: '#/components/parameters/Year'}, {$ref: '#/components/parameters/Month'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      parameters:
+        [
+          { $ref: "#/components/parameters/Year" },
+          { $ref: "#/components/parameters/Month" },
+        ]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /hijri/convert:
     get:
       tags: [Hijri]
       summary: Konversi Masehi <-> Hijriyah (V1)
       parameters:
-        - {name: gregorian, in: query, schema: {type: string, format: date}}
-        - {name: hijri, in: query, schema: {type: string, example: '1448-09-01'}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+        - { name: gregorian, in: query, schema: { type: string, format: date } }
+        - {
+            name: hijri,
+            in: query,
+            schema: { type: string, example: "1448-09-01" },
+          }
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /hijri/events:
     get:
       tags: [Hijri]
       summary: Daftar hari besar Islam pada tahun Hijriyah/Masehi (V1)
-      parameters: [{name: year, in: query, schema: {type: integer}}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      parameters: [{ name: year, in: query, schema: { type: integer } }]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /fasting/schedule:
     get:
       tags: [Hijri]
       summary: Jadwal puasa sunnah sebulan (Senin-Kamis, Ayyamul Bidh, Arafah, Asyura, dll) (V2)
-      parameters: [{$ref: '#/components/parameters/Year'}, {$ref: '#/components/parameters/Month'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      parameters:
+        [
+          { $ref: "#/components/parameters/Year" },
+          { $ref: "#/components/parameters/Month" },
+        ]
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
 
-  # ---------- Reminder / Push (V2, V3) ----------
-  /reminders/settings:
-    get:
-      tags: [Reminder]
-      summary: Ambil pengaturan pengingat adzan (V2)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    put:
-      tags: [Reminder]
-      summary: Simpan pengaturan pengingat adzan (V2)
-      security: [{bearer: []}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/ReminderSettings'}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+  # ---------- Web Push (tanpa akun) ----------
   /push/vapid-public-key:
     get:
       tags: [Reminder]
-      summary: Public key VAPID untuk subscribe Web Push (V3)
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+      summary: (DITUNDA) Kunci publik VAPID untuk berlangganan Web Push (503 jika belum dikonfigurasi)
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /push/subscriptions:
     post:
       tags: [Reminder]
-      summary: Daftarkan langganan Web Push perangkat (V3)
-      security: [{bearer: []}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/PushSubscription'}}}}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
-  /push/subscriptions/{id}:
-    delete:
-      tags: [Reminder]
-      summary: Hapus langganan Web Push (V3)
-      security: [{bearer: []}]
-      parameters: [{$ref: '#/components/parameters/Id'}]
-      responses: {'204': {$ref: '#/components/responses/NoContent'}}
-
-  # ---------- User data (V3) ----------
-  /bookmarks:
-    get:
-      tags: [User]
-      summary: Daftar bookmark (V3)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    post:
-      tags: [User]
-      summary: Tambah bookmark (V3)
-      security: [{bearer: []}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Bookmark'}}}}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
-  /bookmarks/{id}:
-    delete:
-      tags: [User]
-      summary: Hapus bookmark (V3)
-      security: [{bearer: []}]
-      parameters: [{$ref: '#/components/parameters/Id'}]
-      responses: {'204': {$ref: '#/components/responses/NoContent'}}
-  /last-read:
-    get:
-      tags: [User]
-      summary: Posisi terakhir dibaca (V3)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    put:
-      tags: [User]
-      summary: Simpan posisi terakhir dibaca (V3)
-      security: [{bearer: []}]
-      requestBody:
-        required: true
-        content: {application/json: {schema: {type: object, properties: {surah: {type: integer}, ayat: {type: integer}}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /notes:
-    get:
-      tags: [User]
-      summary: Daftar catatan ayat, filter surah opsional (V3)
-      security: [{bearer: []}]
-      parameters: [{name: surah, in: query, schema: {type: integer}}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    post:
-      tags: [User]
-      summary: Tambah catatan (V3)
-      security: [{bearer: []}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Note'}}}}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
-  /notes/{id}:
-    put:
-      tags: [User]
-      summary: Ubah catatan (V3)
-      security: [{bearer: []}]
-      parameters: [{$ref: '#/components/parameters/Id'}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Note'}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    delete:
-      tags: [User]
-      summary: Hapus catatan (V3)
-      security: [{bearer: []}]
-      parameters: [{$ref: '#/components/parameters/Id'}]
-      responses: {'204': {$ref: '#/components/responses/NoContent'}}
-  /settings:
-    get:
-      tags: [User]
-      summary: Preferensi tampilan (tema, font Arab, qari) (V3)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    put:
-      tags: [User]
-      summary: Simpan preferensi (V3)
-      security: [{bearer: []}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/UserSettings'}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-
-  # ---------- Tilawah (V3) ----------
-  /tilawah/target:
-    get:
-      tags: [Tilawah]
-      summary: Target khatam aktif (V3)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-    put:
-      tags: [Tilawah]
-      summary: Atur target khatam (V3)
-      security: [{bearer: []}]
-      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/TilawahTarget'}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /tilawah/logs:
-    post:
-      tags: [Tilawah]
-      summary: Catat bacaan (surah, ayat awal-akhir, tanggal) (V3)
-      security: [{bearer: []}]
+      summary: (DITUNDA) Daftarkan atau perbarui langganan pengingat sholat perangkat ini
+      description: |
+        Anonim (tanpa login). Hanya endpoint dari layanan push browser besar yang diterima.
+        Server mengirim notifikasi pada waktu sholat menurut zona waktu provinsi.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [subscription, provinsi, kabkota]
               properties:
-                surah: {type: integer}
-                fromAyat: {type: integer}
-                toAyat: {type: integer}
-                date: {type: string, format: date}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
-  /tilawah/progress:
-    get:
-      tags: [Tilawah]
-      summary: Progres khatam, target harian, sisa hari, streak (V3)
-      security: [{bearer: []}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+                subscription: { $ref: "#/components/schemas/PushSubscription" }
+                provinsi: { type: string }
+                kabkota: { type: string }
+                lead:
+                  {
+                    type: integer,
+                    enum: [0, 5, 10, 15],
+                    description: "menit sebelum waktu sholat",
+                  }
+      responses:
+        {
+          "201": { $ref: "#/components/responses/Created" },
+          "400": { description: Data tidak valid },
+          "404": { $ref: "#/components/responses/NotFound" },
+        }
+    delete:
+      tags: [Reminder]
+      summary: (DITUNDA) Hentikan langganan perangkat ini
+      requestBody:
+        required: true
+        content:
+          {
+            application/json:
+              {
+                schema:
+                  {
+                    type: object,
+                    required: [endpoint],
+                    properties: { endpoint: { type: string } },
+                  },
+              },
+          }
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
 
-  # ---------- Dzikir & Doa (V4) ----------
-  /dzikir:
-    get:
-      tags: [Dzikir & Doa]
-      summary: Dzikir pagi/petang (Arab, latin, terjemahan, jumlah ulang) (V4)
-      x-source: PERLU dataset terverifikasi
-      parameters: [{name: waktu, in: query, required: true, schema: {type: string, enum: [pagi, petang]}}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+  # ---------- Doa & Dzikir ----------
   /doa:
     get:
       tags: [Dzikir & Doa]
-      summary: Daftar doa harian, filter kategori/kata kunci (V4)
-      x-source: equran.id menyebut Doa API; endpoint perlu diverifikasi
+      summary: Daftar doa & dzikir (228 bacaan), dengan filter opsional
+      x-source: equran.id GET /api/doa (di-cache, difilter di backend)
       parameters:
-        - {name: kategori, in: query, schema: {type: string}}
-        - {name: q, in: query, schema: {type: string}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
+        - { name: grup, in: query, schema: { type: string } }
+        - { name: tag, in: query, schema: { type: string } }
+        - {
+            name: q,
+            in: query,
+            description: "cari di nama, arti, latin, tag",
+            schema: { type: string },
+          }
+      responses: { "200": { $ref: "#/components/responses/Ok" } }
   /doa/{id}:
     get:
       tags: [Dzikir & Doa]
-      summary: Detail satu doa (V4)
-      parameters: [{$ref: '#/components/parameters/Id'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}, '404': {$ref: '#/components/responses/NotFound'}}
-
-  # ---------- Learn (V4, V5) ----------
-  /hafalan:
-    get:
-      tags: [Learn]
-      summary: Status hafalan per surah/ayat (V4)
-      security: [{bearer: []}]
-      parameters: [{name: surah, in: query, schema: {type: integer}}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /hafalan/{nomor}/{ayat}:
-    put:
-      tags: [Learn]
-      summary: Tandai ayat sudah/belum dihafal (V4)
-      security: [{bearer: []}]
-      parameters: [{$ref: '#/components/parameters/Nomor'}, {$ref: '#/components/parameters/Ayat'}]
-      requestBody:
-        required: true
-        content: {application/json: {schema: {type: object, properties: {memorized: {type: boolean}}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /quiz/sessions:
-    post:
-      tags: [Learn]
-      summary: Mulai sesi kuis (mode tebak surah dari ayat atau audio) (V5)
-      security: [{bearer: []}]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                mode: {type: string, enum: [ayat, audio]}
-                questions: {type: integer, default: 10}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
-  /quiz/sessions/{id}/answers:
-    post:
-      tags: [Learn]
-      summary: Kirim jawaban satu soal (V5)
-      security: [{bearer: []}]
-      parameters: [{$ref: '#/components/parameters/Id'}]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                questionId: {type: string}
-                answerSurah: {type: integer}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /quiz/leaderboard:
-    get:
-      tags: [Learn]
-      summary: Papan peringkat kuis (V5)
-      parameters: [{$ref: '#/components/parameters/Limit'}]
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-
-  # ---------- Admin ----------
-  /admin/hijri/offset:
-    put:
-      tags: [Admin]
-      summary: Koreksi tanggal Hijriyah (-2..+2 hari) sesuai penetapan Kemenag (V1)
-      security: [{bearer: []}]
-      requestBody:
-        required: true
-        content: {application/json: {schema: {type: object, properties: {offsetDays: {type: integer, minimum: -2, maximum: 2}}}}}
-      responses: {'200': {$ref: '#/components/responses/Ok'}}
-  /admin/hijri/events:
-    post:
-      tags: [Admin]
-      summary: Tambah/ubah hari besar Islam (V1)
-      security: [{bearer: []}]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name: {type: string}
-                hijriMonth: {type: integer}
-                hijriDay: {type: integer}
-      responses: {'201': {$ref: '#/components/responses/Created'}}
+      summary: Detail satu doa (id numerik dari daftar)
+      parameters: [{ $ref: "#/components/parameters/Id" }]
+      responses:
+        {
+          "200": { $ref: "#/components/responses/Ok" },
+          "404": { $ref: "#/components/responses/NotFound" },
+        }
