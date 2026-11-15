@@ -20,6 +20,7 @@ try {
   /* abaikan */
 }
 function setMode(m) {
+  if (m !== mode.value) query.value = ""; // kata kunci tidak relevan antar mode
   mode.value = m;
   try {
     localStorage.setItem(MODE_KEY, m);
@@ -58,6 +59,19 @@ const lastReadJuz = computed(() =>
     : null,
 );
 
+const filteredJuz = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  if (!q) return juzList.value;
+  return juzList.value.filter(
+    (j) =>
+      String(j.juz) === q ||
+      `juz ${j.juz}` === q ||
+      j.nama.toLowerCase().includes(q) ||
+      j.from.toLowerCase().includes(q) ||
+      j.to.toLowerCase().includes(q),
+  );
+});
+
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase();
   return surahs.value.filter(
@@ -92,32 +106,13 @@ const filtered = computed(() => {
     </RouterLink>
   </div>
 
-  <div class="chips mode" role="group" aria-label="Tampilan daftar">
-    <button
-      class="chip"
-      :class="{ on: mode === 'surah' }"
-      :aria-pressed="mode === 'surah'"
-      @click="setMode('surah')"
-    >
-      Surah
-    </button>
-    <button
-      class="chip"
-      :class="{ on: mode === 'juz' }"
-      :aria-pressed="mode === 'juz'"
-      @click="setMode('juz')"
-    >
-      Juz
-    </button>
-  </div>
-
-  <div v-if="mode === 'surah'" class="search">
+  <div class="search">
     <input
       v-model="query"
       class="input"
       type="search"
-      placeholder="Cari surah (nama, arti, atau nomor)"
-      aria-label="Cari surah"
+      :placeholder="mode === 'juz' ? 'Cari juz (nomor, nama juz, atau nama surah)' : 'Cari surah (nama, arti, atau nomor)'"
+      :aria-label="mode === 'juz' ? 'Cari juz' : 'Cari surah'"
     />
     <button
       v-if="query"
@@ -129,30 +124,52 @@ const filtered = computed(() => {
     </button>
   </div>
 
-  <div
-    v-if="mode === 'surah' && places.length"
-    class="chips"
-    role="group"
-    aria-label="Tempat turun"
-  >
-    <button
-      class="chip"
-      :class="{ on: !place }"
-      :aria-pressed="!place"
-      @click="place = ''"
+  <div class="filters">
+    <div class="chips" role="group" aria-label="Tampilan daftar">
+      <button
+        class="chip"
+        :class="{ on: mode === 'surah' }"
+        :aria-pressed="mode === 'surah'"
+        @click="setMode('surah')"
+      >
+        Surah
+      </button>
+      <button
+        class="chip"
+        :class="{ on: mode === 'juz' }"
+        :aria-pressed="mode === 'juz'"
+        @click="setMode('juz')"
+      >
+        Juz
+      </button>
+    </div>
+
+    <span v-if="mode === 'surah' && places.length" class="sep" aria-hidden="true"></span>
+    <div
+      v-if="mode === 'surah' && places.length"
+      class="chips"
+      role="group"
+      aria-label="Tempat turun"
     >
-      Semua
-    </button>
-    <button
-      v-for="p in places"
-      :key="p"
-      class="chip"
-      :class="{ on: place === p }"
-      :aria-pressed="place === p"
-      @click="place = place === p ? '' : p"
-    >
-      {{ p }}
-    </button>
+      <button
+        class="chip"
+        :class="{ on: !place }"
+        :aria-pressed="!place"
+        @click="place = ''"
+      >
+        Semua
+      </button>
+      <button
+        v-for="p in places"
+        :key="p"
+        class="chip"
+        :class="{ on: place === p }"
+        :aria-pressed="place === p"
+        @click="place = place === p ? '' : p"
+      >
+        {{ p }}
+      </button>
+    </div>
   </div>
 
   <p v-if="error" class="error">{{ error }}</p>
@@ -167,9 +184,13 @@ const filtered = computed(() => {
     <SurahCard v-for="s in filtered" :key="s.nomor" :surah="s" />
   </div>
 
+  <p v-if="!loading && !error && mode === 'juz' && !filteredJuz.length" class="muted">
+    Juz tidak ditemukan. Coba nomor juz atau nama surah.
+  </p>
+
   <div v-if="!loading && !error && mode === 'juz'" class="grid">
     <RouterLink
-      v-for="j in juzList"
+      v-for="j in filteredJuz"
       :key="j.juz"
       :to="`/surah/${j.surah}?ayah=${j.ayat}`"
       class="card juz-card"
@@ -194,7 +215,26 @@ const filtered = computed(() => {
   border-color: var(--primary);
   margin-bottom: 1.2rem;
 }
-.mode { margin-bottom: 0.8rem; }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.7rem;
+  margin: 0.8rem 0 0.4rem;
+}
+.filters .chips {
+  padding: 0.2rem 0;
+  margin: 0;
+  overflow: visible;
+}
+.sep {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+}
+@media (max-width: 480px) {
+  .sep { display: none; }
+}
 .juz-card {
   display: flex;
   align-items: center;
