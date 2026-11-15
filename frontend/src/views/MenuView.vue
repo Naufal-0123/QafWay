@@ -34,6 +34,12 @@ const menuItems = [
     desc: 'Maal, penghasilan, dan fitrah',
     icon: '💰',
     path: '/zakat'
+  },
+  {
+    title: 'Masjid Terdekat',
+    desc: 'Cari masjid di sekitar Anda',
+    icon: '🕌',
+    path: '/masjid'
   }
 ]
 </script>
