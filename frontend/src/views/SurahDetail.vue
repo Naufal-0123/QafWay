@@ -486,7 +486,7 @@ watch(
       </div>
 
       <div class="audio-banner card">
-        <span>Putar Surah (Presisi per Ayat)</span>
+        <span>Putar Surah</span>
         <button class="btn primary" @click="toggleFullAudio">
           {{ isPlaying ? "❚❚ Jeda Audio" : "▶ Putar Surah" }}
         </button>
