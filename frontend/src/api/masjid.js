@@ -20,8 +20,15 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 }
 
 function buildQuery(lat, lon, radiusM) {
-  const f = `["amenity"="place_of_worship"]["religion"="muslim"](around:${radiusM},${lat},${lon})`;
-  return `[out:json][timeout:20];(node${f};way${f};relation${f};);out center tags 200;`;
+  const a = `(around:${radiusM},${lat},${lon})`;
+  // Beberapa cara umum masjid/musholla ditandai di OpenStreetMap
+  const selectors = [
+    `["amenity"="place_of_worship"]["religion"~"^(muslim|islam)$"]`,
+    `["building"="mosque"]`,
+    `["amenity"="place_of_worship"]["name"~"masjid|mesjid|musholla|mushola|mushalla|musala|langgar|surau",i]`,
+  ];
+  const body = selectors.map((f) => `nwr${f}${a};`).join("");
+  return `[out:json][timeout:25];(${body});out center tags 300;`;
 }
 
 function addressOf(t) {
@@ -43,7 +50,10 @@ function normalize(el, lat, lon) {
     id: `${el.type}/${el.id}`,
     name: name || "Tempat ibadah tanpa nama",
     unnamed: !name,
-    kind: SMALL_PRAYER_HALL.test(name) ? "musholla" : "masjid",
+    kind:
+      SMALL_PRAYER_HALL.test(name) && t.building !== "mosque"
+        ? "musholla"
+        : "masjid",
     address: addressOf(t),
     lat: eLat,
     lon: eLon,
@@ -90,7 +100,7 @@ async function fetchOverpass(query) {
 }
 
 export async function findNearbyMosques(lat, lon, radiusKm = 2) {
-  const key = `qafway-masjid:${lat.toFixed(3)},${lon.toFixed(3)},${radiusKm}`;
+  const key = `qafway-masjid-v2:${lat.toFixed(3)},${lon.toFixed(3)},${radiusKm}`;
   const cached = readCache(key);
   if (cached) return cached;
 
@@ -118,4 +128,53 @@ export const mapsLink = (m) =>
 
 export function formatDistance(km) {
   return km < 1 ? `${Math.round(km * 100) * 10} m` : `${km.toFixed(1)} km`;
+}
+
+// Lokasi dengan akurasi tinggi (GPS bila ada) + info seberapa akurat hasilnya.
+export function getPreciseLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation)
+      return reject(new Error("Browser ini tidak mendukung deteksi lokasi."));
+    navigator.geolocation.getCurrentPosition(
+      (p) =>
+        resolve({
+          lat: p.coords.latitude,
+          lon: p.coords.longitude,
+          accuracy: Math.round(p.coords.accuracy),
+          label: "Lokasi perangkat",
+        }),
+      (e) =>
+        reject(
+          new Error(
+            e.code === 1
+              ? "Izin lokasi ditolak. Aktifkan lewat pengaturan situs, atau atur lokasi secara manual."
+              : e.code === 3
+                ? "Pencarian lokasi terlalu lama. Coba lagi atau atur lokasi secara manual."
+                : "Lokasi tidak tersedia. Atur lokasi secara manual.",
+          ),
+        ),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+    );
+  });
+}
+
+// Cari nama tempat/alamat (Nominatim) untuk mengatur titik pencarian secara manual.
+export async function searchPlace(query) {
+  const q = query.trim();
+  if (q.length < 3) throw new Error("Ketik minimal 3 huruf.");
+  let res;
+  try {
+    res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=id&accept-language=id&q=${encodeURIComponent(q)}`,
+    );
+  } catch {
+    throw new Error("Gagal mencari lokasi. Periksa koneksi internet Anda.");
+  }
+  if (!res.ok) throw new Error("Gagal mencari lokasi.");
+  return (await res.json()).map((r) => ({
+    label: r.display_name,
+    lat: Number(r.lat),
+    lon: Number(r.lon),
+    accuracy: null,
+  }));
 }
