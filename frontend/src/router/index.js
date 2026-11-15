@@ -9,6 +9,7 @@ import QiblaView from "../views/QiblaView.vue";
 import TilawahView from "../views/TilawahView.vue";
 import MenuView from "../views/MenuView.vue";
 import DzikirView from "../views/DzikirView.vue";
+import ZakatView from "../views/ZakatView.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -30,12 +31,13 @@ export default createRouter({
       name: "tafsir",
       component: TafsirView,
     },
-   
+
     // Menu "Lainnya" & Fitur Pendukung di dalam Menu Lainnya
     { path: "/menu", name: "menu", component: MenuView },
     { path: "/kiblat", name: "kiblat", component: QiblaView },
     { path: "/tilawah", name: "tilawah", component: TilawahView },
     { path: "/dzikir", name: "dzikir", component: DzikirView },
+    { path: "/zakat", name: "zakat", component: ZakatView },
   ],
   scrollBehavior: () => ({ top: 0 }),
 });

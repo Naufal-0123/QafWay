@@ -28,6 +28,12 @@ const menuItems = [
     desc: 'Target dan progres khatam',
     icon: '📖',
     path: '/tilawah'
+  },
+  {
+    title: 'Kalkulator Zakat',
+    desc: 'Maal, penghasilan, dan fitrah',
+    icon: '💰',
+    path: '/zakat'
   }
 ]
 </script>
