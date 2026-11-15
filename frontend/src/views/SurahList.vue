@@ -92,24 +92,6 @@ const filtered = computed(() => {
     </RouterLink>
   </div>
 
-  <div v-if="mode === 'surah'" class="search">
-    <input
-      v-model="query"
-      class="input"
-      type="search"
-      placeholder="Cari surah (nama, arti, atau nomor)"
-      aria-label="Cari surah"
-    />
-    <button
-      v-if="query"
-      class="clear"
-      aria-label="Hapus pencarian"
-      @click="query = ''"
-    >
-      ✕
-    </button>
-  </div>
-
   <div class="chips mode" role="group" aria-label="Tampilan daftar">
     <button
       class="chip"
@@ -126,6 +108,24 @@ const filtered = computed(() => {
       @click="setMode('juz')"
     >
       Juz
+    </button>
+  </div>
+
+  <div v-if="mode === 'surah'" class="search">
+    <input
+      v-model="query"
+      class="input"
+      type="search"
+      placeholder="Cari surah (nama, arti, atau nomor)"
+      aria-label="Cari surah"
+    />
+    <button
+      v-if="query"
+      class="clear"
+      aria-label="Hapus pencarian"
+      @click="query = ''"
+    >
+      ✕
     </button>
   </div>
 
