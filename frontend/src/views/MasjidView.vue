@@ -8,6 +8,7 @@ const loading = ref(false)
 const error = ref('')
 const items = ref([])
 const searched = ref(false)
+const step = ref('') // 'lokasi' | 'data'
 
 const origin = ref(null) // { lat, lon, accuracy, label }
 const manual = ref(false) // true = titik diatur manual, tidak pakai GPS
@@ -26,6 +27,7 @@ const lowAccuracy = computed(() => !manual.value && origin.value?.accuracy > 100
 async function runSearch() {
   loading.value = true
   error.value = ''
+  step.value = 'data'
   try {
     items.value = await findNearbyMosques(origin.value.lat, origin.value.lon, Number(radius.value))
     searched.value = true
@@ -34,17 +36,20 @@ async function runSearch() {
     error.value = e.message
   } finally {
     loading.value = false
+    step.value = ''
   }
 }
 
 async function useMyLocation() {
   loading.value = true
   error.value = ''
+  step.value = 'lokasi'
   manual.value = false
   try {
     origin.value = await getPreciseLocation()
   } catch (e) {
     loading.value = false
+    step.value = ''
     items.value = []
     error.value = e.message
     return
@@ -141,7 +146,10 @@ onMounted(useMyLocation)
     </section>
 
     <p v-if="error" class="error">{{ error }}</p>
-    <p v-else-if="loading" class="muted center">Mencari masjid di sekitar titik ini…</p>
+    <p v-else-if="loading && step === 'lokasi'" class="muted center">
+      Menunggu lokasi perangkat… Jika muncul kotak izin di browser, pilih <strong>Izinkan</strong>.
+    </p>
+    <p v-else-if="loading" class="muted center">Mengambil data masjid di sekitar titik ini…</p>
     <p v-else-if="searched && !visible.length" class="muted center">
       Tidak ada hasil dalam radius {{ radius }} km. Coba perbesar radius atau atur lokasi manual.
     </p>

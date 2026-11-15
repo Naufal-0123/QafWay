@@ -2,6 +2,7 @@
 // Koordinat pengguna dikirim langsung dari browser ke server Overpass.
 const ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
+  "https://lz4.overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
 ];
 const CACHE_TTL = 10 * 60 * 1000; // 10 menit
@@ -28,7 +29,7 @@ function buildQuery(lat, lon, radiusM) {
     `["amenity"="place_of_worship"]["name"~"masjid|mesjid|musholla|mushola|mushalla|musala|langgar|surau",i]`,
   ];
   const body = selectors.map((f) => `nwr${f}${a};`).join("");
-  return `[out:json][timeout:25];(${body});out center tags 300;`;
+  return `[out:json][timeout:12];(${body});out center tags 300;`;
 }
 
 function addressOf(t) {
@@ -83,7 +84,7 @@ async function fetchOverpass(query) {
   let lastErr;
   for (const base of ENDPOINTS) {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 22000);
+    const timer = setTimeout(() => ctrl.abort(), 14000);
     try {
       const res = await fetch(`${base}?data=${encodeURIComponent(query)}`, {
         signal: ctrl.signal,
@@ -135,24 +136,41 @@ export function getPreciseLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation)
       return reject(new Error("Browser ini tidak mendukung deteksi lokasi."));
+
+    // Timeout bawaan browser baru berjalan setelah izin diberikan. Jika kotak izin
+    // diabaikan, permintaan bisa menggantung selamanya, jadi dipasang batas sendiri.
+    const guard = setTimeout(
+      () =>
+        reject(
+          new Error(
+            "Izin lokasi belum diberikan. Klik ikon lokasi/gembok di sebelah alamat situs lalu pilih Izinkan, atau atur lokasi secara manual.",
+          ),
+        ),
+      20000,
+    );
+
     navigator.geolocation.getCurrentPosition(
-      (p) =>
+      (p) => {
+        clearTimeout(guard);
         resolve({
           lat: p.coords.latitude,
           lon: p.coords.longitude,
           accuracy: Math.round(p.coords.accuracy),
           label: "Lokasi perangkat",
-        }),
-      (e) =>
+        });
+      },
+      (e) => {
+        clearTimeout(guard);
         reject(
           new Error(
             e.code === 1
-              ? "Izin lokasi ditolak. Aktifkan lewat pengaturan situs, atau atur lokasi secara manual."
+              ? "Izin lokasi ditolak. Klik ikon lokasi/gembok di sebelah alamat situs lalu pilih Izinkan, atau atur lokasi secara manual."
               : e.code === 3
                 ? "Pencarian lokasi terlalu lama. Coba lagi atau atur lokasi secara manual."
                 : "Lokasi tidak tersedia. Atur lokasi secara manual.",
           ),
-        ),
+        );
+      },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
   });
