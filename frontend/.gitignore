@@ -1,3 +1,23 @@
+
+# Dependencies
 node_modules/
-.env
+**/node_modules/
+
+# Build
 dist/
+**/dist/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Go binary
+backend/app
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
