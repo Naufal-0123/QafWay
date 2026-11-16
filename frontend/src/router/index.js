@@ -39,7 +39,6 @@ export default createRouter({
     { path: "/tilawah", name: "tilawah", component: TilawahView },
     { path: "/dzikir", name: "dzikir", component: DzikirView },
     { path: "/zakat", name: "zakat", component: ZakatView },
-    { path: "/masjid", name: "masjid", component: MasjidView },
   ],
   scrollBehavior: () => ({ top: 0 }),
 });

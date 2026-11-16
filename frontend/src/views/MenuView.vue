@@ -35,12 +35,6 @@ const menuItems = [
     icon: '💰',
     path: '/zakat'
   },
-  {
-    title: 'Masjid Terdekat',
-    desc: 'Cari masjid di sekitar Anda',
-    icon: '🕌',
-    path: '/masjid'
-  }
 ]
 </script>
 
