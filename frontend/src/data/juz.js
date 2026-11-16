@@ -61,10 +61,11 @@ export function buildJuzList(surahs) {
         endAyat = byNo[endSurah]?.jumlahAyat ?? 1;
       }
     }
-    return {
-      ...j,
-      from: `${nameOf(j.surah)} ${j.ayat}`,
-      to: `${nameOf(endSurah)} ${endAyat}`,
-    };
+    const from = `${nameOf(j.surah)} ${j.ayat}`;
+    const to = `${nameOf(endSurah)} ${endAyat}`;
+    // Satu surah: "Al-Baqarah 142–252"; beda surah: "Al-Fatihah 1 – Al-Baqarah 141"
+    const range =
+      endSurah === j.surah ? `${nameOf(j.surah)} ${j.ayat}–${endAyat}` : `${from} – ${to}`;
+    return { ...j, from, to, range };
   });
 }
