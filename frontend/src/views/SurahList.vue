@@ -59,6 +59,17 @@ const lastReadJuz = computed(() =>
     : null,
 );
 
+// Angka Arab-Indic untuk label "جزء ٢" di sisi kanan kartu
+const arabicNumber = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+
+// Ringkas rentang: "Al-Baqarah 142 – Al-Baqarah 252" menjadi "Al-Baqarah 142–252"
+function juzRange(j) {
+  const a = /^(.*) (\d+)$/.exec(j.from);
+  const b = /^(.*) (\d+)$/.exec(j.to);
+  if (a && b && a[1] === b[1]) return `${a[1]} ${a[2]}–${b[2]}`;
+  return `${j.from} – ${j.to}`;
+}
+
 const filteredJuz = computed(() => {
   const q = query.value.trim().toLowerCase();
   if (!q) return juzList.value;
@@ -193,15 +204,16 @@ const filtered = computed(() => {
       v-for="j in filteredJuz"
       :key="j.juz"
       :to="`/surah/${j.surah}?ayah=${j.ayat}`"
-      class="card juz-card"
+      class="card surah-card"
       :class="{ current: j.juz === lastReadJuz }"
+      :title="`Juz ${j.juz} · ${j.nama} · ${j.from} – ${j.to}`"
     >
-      <span class="juz-no">{{ j.juz }}</span>
-      <span class="juz-info">
+      <span class="num">{{ j.juz }}</span>
+      <div class="meta">
         <strong>Juz {{ j.juz }}</strong>
-        <small class="muted">{{ j.nama }}</small>
-        <small class="muted">{{ j.from }} – {{ j.to }}</small>
-      </span>
+        <small>{{ j.nama }} · {{ juzRange(j) }}</small>
+      </div>
+      <span class="arab-name" dir="rtl" lang="ar">جزء {{ arabicNumber(j.juz) }}</span>
     </RouterLink>
   </div>
 </template>
@@ -235,34 +247,6 @@ const filtered = computed(() => {
 @media (max-width: 480px) {
   .sep { display: none; }
 }
-.juz-card {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  margin: 0;
-  text-decoration: none;
-  color: inherit;
-  min-width: 0;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-.juz-card:active { transform: scale(0.98); }
-@media (hover: hover) {
-  .juz-card:hover { border-color: var(--primary); }
-}
-.juz-card.current { border-color: var(--primary); background: var(--primary-soft); }
-.juz-no {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-weight: 700;
-  color: var(--primary);
-  background: var(--primary-soft);
-  border: 1px solid var(--primary);
-}
-.juz-card.current .juz-no { background: var(--primary); color: var(--on-primary); }
-.juz-info { display: grid; gap: 1px; min-width: 0; }
-.juz-info small { overflow-wrap: anywhere; font-size: 0.78rem; }
+/* Kartu juz memakai gaya kartu surah; ini hanya penanda juz yang sedang dibaca */
+.surah-card.current { border-color: var(--primary); background: var(--primary-soft); }
 </style>
