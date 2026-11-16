@@ -1,5 +1,5 @@
 // Service worker e-Quran: notifikasi pengingat + dukungan offline.
-const VERSION = "v1"; // naikkan angka ini jika ingin memaksa cache lama dibuang
+const VERSION = "v2"; // naikkan angka ini jika ingin memaksa cache lama dibuang
 const STATIC_CACHE = `equran-static-${VERSION}`;
 const API_CACHE = `equran-api-${VERSION}`;
 const FONT_CACHE = `equran-fonts-${VERSION}`;
@@ -138,12 +138,18 @@ async function trimApi() {
     await cache.delete(keys[i]);
 }
 
+// File di /assets/ adalah JS/CSS ber-hash. Jika server (saat deploy sedang berlangsung)
+// membalas dengan halaman HTML, jangan disimpan: itu akan membuat halaman putih permanen.
+const isHtml = (res) =>
+  (res.headers.get("content-type") || "").includes("text/html");
+
 async function cacheFirst(req, name) {
   const cache = await caches.open(name);
   const hit = await cache.match(req);
-  if (hit) return hit;
+  if (hit && !isHtml(hit)) return hit;
+  if (hit) await cache.delete(req); // buang entri rusak
   const res = await fetch(req);
-  await store(cache, req, res);
+  if (!isHtml(res)) await store(cache, req, res);
   return res;
 }
 
