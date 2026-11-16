@@ -10,7 +10,6 @@ import TilawahView from "../views/TilawahView.vue";
 import MenuView from "../views/MenuView.vue";
 import DzikirView from "../views/DzikirView.vue";
 import ZakatView from "../views/ZakatView.vue";
-import MasjidView from "../views/MasjidView.vue";
 
 export default createRouter({
   history: createWebHistory(),
