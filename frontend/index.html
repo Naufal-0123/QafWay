@@ -4,40 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QafWay</title>
-    <!-- Pemulihan otomatis: jika file JS/CSS di /assets/ gagal dimuat (misalnya salinan lama
-         halaman menunjuk ke file deploy sebelumnya), hapus service worker + cache lalu muat ulang sekali. -->
-    <script>
-      window.addEventListener(
-        "error",
-        function (e) {
-          var t = e.target;
-          if (!t || !t.tagName || (t.tagName !== "SCRIPT" && t.tagName !== "LINK")) return;
-          var url = t.src || t.href || "";
-          if (url.indexOf("/assets/") === -1) return;
-          try {
-            if (sessionStorage.getItem("qafway-recovered")) return; // cukup sekali, cegah loop
-            sessionStorage.setItem("qafway-recovered", "1");
-          } catch (err) {
-            return;
-          }
-          var jobs = [];
-          if (navigator.serviceWorker)
-            jobs.push(
-              navigator.serviceWorker.getRegistrations().then(function (rs) {
-                return Promise.all(rs.map(function (r) { return r.unregister(); }));
-              }),
-            );
-          if (window.caches)
-            jobs.push(
-              caches.keys().then(function (ks) {
-                return Promise.all(ks.map(function (k) { return caches.delete(k); }));
-              }),
-            );
-          Promise.all(jobs).catch(function () {}).then(function () { location.reload(); });
-        },
-        true,
-      );
-    </script>
   </head>
   <body>
     <div id="app"></div>
