@@ -196,7 +196,7 @@ const filtered = computed(() => {
     Juz tidak ditemukan. Coba nomor juz atau nama surah.
   </p>
 
-  <div v-if="!loading && !error && mode === 'juz'" class="grid">
+  <div v-if="!loading && !error && mode === 'juz'" class="grid juz-grid">
     <RouterLink
       v-for="j in filteredJuz"
       :key="j.juz"
@@ -208,7 +208,8 @@ const filtered = computed(() => {
       <span class="num">{{ j.juz }}</span>
       <div class="meta">
         <strong>Juz {{ j.juz }}</strong>
-        <small>{{ j.nama }} · {{ juzRange(j) }}</small>
+        <small>{{ j.nama }}</small>
+        <small>{{ juzRange(j) }}</small>
       </div>
     </RouterLink>
   </div>
@@ -245,4 +246,7 @@ const filtered = computed(() => {
 }
 /* Kartu juz memakai gaya kartu surah; ini hanya penanda juz yang sedang dibaca */
 .surah-card.current { border-color: var(--primary); background: var(--primary-soft); }
+/* Daftar juz: kartu lebih lebar agar rentang surah terbaca penuh (2 kolom di desktop, 1 di HP) */
+.grid.juz-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.juz-grid .surah-card small { white-space: normal; overflow: visible; text-overflow: clip; }
 </style>
