@@ -69,7 +69,7 @@ async function copyDzikir(d) {
 <template>
   <div class="dzikir-container">
     <div class="header-section">
-      <h1 class="title">Dzikir &amp; Wirid</h1>
+      <h1 class="title">Dzikir Pagi &amp; Petang</h1>
       <p class="subtitle muted">Amalan harian penenang hati, pagi dan petang.</p>
     </div>
 
