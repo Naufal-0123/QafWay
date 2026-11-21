@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { ASMAUL_HUSNA } from "../data/asmaulHusna";
+import { ASMAUL_HUSNA } from "../data/asmaulhusna";
 
 const query = ref("");
 const selectedNo = ref(null); // nomor nama yang dibuka di lembar detail
