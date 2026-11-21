@@ -59,6 +59,9 @@ const lastReadJuz = computed(() =>
     : null,
 );
 
+// Angka Arab-Indic untuk label "جزء ٢" di sisi kanan kartu juz
+const arabicNumber = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+
 // Ringkas rentang: "Al-Baqarah 142 – Al-Baqarah 252" menjadi "Al-Baqarah 142–252"
 function juzRange(j) {
   const a = /^(.*) (\d+)$/.exec(j.from);
@@ -211,6 +214,7 @@ const filtered = computed(() => {
         <small>{{ j.nama }}</small>
         <small>{{ juzRange(j) }}</small>
       </div>
+      <span class="arab-name" dir="rtl" lang="ar">جزء {{ arabicNumber(j.juz) }}</span>
     </RouterLink>
   </div>
 </template>

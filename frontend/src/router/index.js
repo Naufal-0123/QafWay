@@ -10,6 +10,7 @@ import TilawahView from "../views/TilawahView.vue";
 import MenuView from "../views/MenuView.vue";
 import DzikirView from "../views/DzikirView.vue";
 import ZakatView from "../views/ZakatView.vue";
+import AsmaulHusnaView from "../views/AsmaulHusnaView.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -38,6 +39,7 @@ export default createRouter({
     { path: "/tilawah", name: "tilawah", component: TilawahView },
     { path: "/dzikir", name: "dzikir", component: DzikirView },
     { path: "/zakat", name: "zakat", component: ZakatView },
+    { path: "/asmaul-husna", name: "asmaul-husna", component: AsmaulHusnaView },
   ],
   scrollBehavior: () => ({ top: 0 }),
 });

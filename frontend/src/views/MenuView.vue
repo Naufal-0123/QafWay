@@ -24,6 +24,12 @@ const menuItems = [
     path: '/dzikir'
   },
   {
+    title: 'Asmaul Husna',
+    desc: '99 nama Allah beserta artinya',
+    icon: '✨',
+    path: '/asmaul-husna'
+  },
+  {
     title: 'Tracker Tilawah',
     desc: 'Target dan progres khatam',
     icon: '📖',
