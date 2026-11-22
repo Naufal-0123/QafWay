@@ -47,19 +47,19 @@ Ico.props = ["n"];
 /* ---------- Navigasi ---------- */
 const NAV = [
   { to: "/", label: "Quran", full: "Quran", icon: "book" },
-  { to: "/doa", label: "Doa", full: "Doa", icon: "heart" },
+  { to: "/dzikir", label: "Dzikir", full: "Dzikir", icon: "spark" },
   { to: "/jadwal-sholat", label: "Sholat", full: "Waktu Sholat", icon: "clock" },
   { to: "/menu", label: "Lainnya", full: "Lainnya", icon: "grid" },
 ];
 
 const PAGES = [
   { test: (p) => p === "/" || p.startsWith("/surah"), label: "Quran", icon: "book", tab: 0 },
-  { test: (p) => p.startsWith("/doa"), label: "Doa", icon: "heart", tab: 1 },
+  { test: (p) => p.startsWith("/dzikir"), label: "Dzikir", icon: "spark", tab: 1 },
   { test: (p) => p.startsWith("/jadwal-sholat"), label: "Waktu Sholat", icon: "clock", tab: 2 },
   { test: (p) => p.startsWith("/menu"), label: "Lainnya", icon: "grid", tab: 3 },
+  { test: (p) => p.startsWith("/doa"), label: "Doa", icon: "heart", tab: 3 },
   { test: (p) => p.startsWith("/kalender"), label: "Kalender", icon: "calendar", tab: 3 },
   { test: (p) => p.startsWith("/kiblat"), label: "Kiblat", icon: "compass", tab: 3 },
-  { test: (p) => p.startsWith("/dzikir"), label: "Dzikir", icon: "spark", tab: 3 },
   { test: (p) => p.startsWith("/tilawah"), label: "Tilawah", icon: "read", tab: 3 },
   { test: (p) => p.startsWith("/zakat"), label: "Zakat", icon: "coin", tab: 3 },
 ];

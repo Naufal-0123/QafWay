@@ -18,11 +18,11 @@ const menuItems = [
     path: '/kiblat'
   },
   {
-    title: 'Dzikir Pagi & Petang',
-    desc: 'Amalan harian penenang hati',
-    icon: '📿',
-    path: '/dzikir'
-  },
+  title: 'Doa',
+  desc: 'Kumpulan doa sehari-hari',
+  icon: '🤲',
+  path: '/doa'
+ },
   {
     title: 'Asmaul Husna',
     desc: '99 nama Allah beserta artinya',
