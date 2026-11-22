@@ -295,18 +295,22 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 
   <!-- Panduan Keterangan Jenis Puasa (Dipindah dari FastingView) -->
   <details class="guide">
-    <summary class="guide-toogle">
-      Keterangan jenis puasa
-    </summary>
-    <ul>
-      <li><strong>Senin dan Kamis</strong>: setiap pekan.</li>
-      <li><strong>Ayyamul Bidh</strong>: tanggal 13, 14, 15 setiap bulan Hijriyah.</li>
-      <li><strong>Tasu'a dan Asyura</strong>: 9 dan 10 Muharram.</li>
-      <li><strong>Arafah</strong>: 9 Dzulhijjah (bagi yang tidak berhaji).</li>
-      <li><strong>Syawal</strong>: enam hari di bulan Syawal; di sini ditandai tanggal 2-7 Syawal, tetapi boleh hari lain dalam Syawal.</li>
-      <li><strong>Dilarang</strong>: 1 Syawal, 10 Dzulhijjah, dan Hari Tasyriq (11-13 Dzulhijjah).</li>
-    </ul>
-  </details>
+  <summary class="guide-toogle">
+    <span class="guide-label">
+      <span class="guide-icon" aria-hidden="true">📖</span>
+      <span>Keterangan jenis puasa</span>
+    </span>
+    <span class="guide-chevron" aria-hidden="true">›</span>
+  </summary>
+  <ul class="guide-list">
+    <li><strong>Senin dan Kamis</strong>: setiap pekan.</li>
+    <li><strong>Ayyamul Bidh</strong>: tanggal 13, 14, 15 setiap bulan Hijriyah.</li>
+    <li><strong>Tasu'a dan Asyura</strong>: 9 dan 10 Muharram.</li>
+    <li><strong>Arafah</strong>: 9 Dzulhijjah (bagi yang tidak berhaji).</li>
+    <li><strong>Syawal</strong>: enam hari di bulan Syawal; di sini ditandai tanggal 2-7 Syawal, tetapi boleh hari lain dalam Syawal.</li>
+    <li><strong>Dilarang</strong>: 1 Syawal, 10 Dzulhijjah, dan Hari Tasyriq (11-13 Dzulhijjah).</li>
+  </ul>
+</details>
 </template>
 
 <style scoped>
@@ -394,7 +398,61 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 }
 
 /* Styling Panduan Keterangan Jenis Puasa */
-.guide { margin: 1.5rem 0 1rem; }
+/* .guide { margin: 1.5rem 0 1rem; }
 .guide summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--primary, #0f766e); font-weight: 600; }
-.guide ul { margin: 4px 0 0; padding-left: 1.1rem; font-size: .9rem; line-height: 1.6; color: var(--muted, #62716c); }
+.guide ul { margin: 4px 0 0; padding-left: 1.1rem; font-size: .9rem; line-height: 1.6; color: var(--muted, #62716c); } */
+
+.guide {
+  width: 100%;
+}
+
+.guide-toogle {
+  list-style: none; /* Menghilangkan marker segitiga bawaan browser */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background-color: #2b6a4e; /* Sesuaikan dengan warna hijau tombol Jadwal sebulan */
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.guide-toogle::-webkit-details-marker {
+  display: none;
+}
+
+.guide-toogle:hover {
+  background-color: #235840;
+}
+
+.guide-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.guide-chevron {
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+/* Putar ikon panah ke bawah saat daftar terbuka */
+.guide[open] .guide-chevron {
+  transform: rotate(90deg);
+}
+
+.guide-list {
+  margin-top: 10px;
+  padding: 14px 18px 14px 34px;
+  border-radius: 14px;
+  background-color: #f7f4eb;
+  border: 1px solid #dfd8c8;
+  line-height: 1.6;
+}
 </style>
