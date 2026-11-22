@@ -4,12 +4,23 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const menuItems = [
- 
+   {
+  title: 'Doa',
+  desc: 'Kumpulan doa sehari-hari',
+  icon: '🤲',
+  path: '/doa'
+ },
+ {
+    title: 'Tracker Tilawah',
+    desc: 'Target dan progres khatam',
+    icon: '📖',
+    path: '/tilawah'
+  },
   {
-    title: 'Kalender Hijriyah & Puasa Sunnah',
-    desc: 'Tanggal dan hari besar',
-    icon: '📅',
-    path: '/kalender'
+    title: 'Asmaul Husna',
+    desc: '99 nama Allah beserta artinya',
+    icon: '✨',
+    path: '/asmaul-husna'
   },
   {
     title: 'Arah Kiblat',
@@ -18,22 +29,10 @@ const menuItems = [
     path: '/kiblat'
   },
   {
-  title: 'Doa',
-  desc: 'Kumpulan doa sehari-hari',
-  icon: '🤲',
-  path: '/doa'
- },
-  {
-    title: 'Asmaul Husna',
-    desc: '99 nama Allah beserta artinya',
-    icon: '✨',
-    path: '/asmaul-husna'
-  },
-  {
-    title: 'Tracker Tilawah',
-    desc: 'Target dan progres khatam',
-    icon: '📖',
-    path: '/tilawah'
+    title: 'Kalender Hijriyah & Puasa Sunnah',
+    desc: 'Tanggal dan hari besar',
+    icon: '📅',
+    path: '/kalender'
   },
   {
     title: 'Kalkulator Zakat',
