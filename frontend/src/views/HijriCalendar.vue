@@ -407,19 +407,34 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 }
 
 .guide-toogle {
-  list-style: none; /* Menghilangkan marker segitiga bawaan browser */
+  cursor: pointer;
+  list-style: none;
+  width: 100%;
+  min-height: 50px;
+  box-sizing: border-box;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  padding: 14px 18px;
+  gap: .8rem;
+
+  padding: .8rem 1rem;
+
+  background: var(--primary);
+  color: var(--on-primary, #ffffff);
+
+  border: 1px solid var(--primary);
   border-radius: 14px;
-  background-color: #2b6a4e; /* Sesuaikan dengan warna hijau tombol Jadwal sebulan */
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
+
+  font-weight: 700;
+  font-size: 1rem;
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .12);
+
+  transition:
+    background .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
 }
 
 .guide-toogle::-webkit-details-marker {
