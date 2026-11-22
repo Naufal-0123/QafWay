@@ -4,13 +4,19 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const menuItems = [
-   {
-  title: 'Doa',
-  desc: 'Kumpulan doa sehari-hari',
-  icon: '🤲',
-  path: '/doa'
- },
- {
+  {
+    title: 'Doa',
+    desc: 'Kumpulan doa sehari-hari',
+    icon: '🤲',
+    path: '/doa'
+  },
+  {
+    title: 'Cerita 25 Nabi dan Rasul',
+    desc: 'Kisah, hikmah, dan rujukan Al-Qur’an',
+    icon: '📚',
+    path: '/kisah-nabi'
+  },
+  {
     title: 'Tracker Tilawah',
     desc: 'Target dan progres khatam',
     icon: '📖',
@@ -24,7 +30,7 @@ const menuItems = [
   },
   {
     title: 'Arah Kiblat',
-    desc: 'Kompas ke Ka\'bah',
+    desc: 'Kompas ke Ka’bah',
     icon: '🧭',
     path: '/kiblat'
   },
@@ -39,21 +45,23 @@ const menuItems = [
     desc: 'Maal, penghasilan, dan fitrah',
     icon: '💰',
     path: '/zakat'
-  },
+  }
 ]
 </script>
 
 <template>
   <div class="lainnya-container">
     <h2>Lainnya</h2>
+
     <div class="grid-menu">
-      <div 
-        v-for="item in menuItems" 
-        :key="item.title" 
-        class="card menu-card" 
+      <div
+        v-for="item in menuItems"
+        :key="item.title"
+        class="card menu-card"
         @click="router.push(item.path)"
       >
         <span class="icon">{{ item.icon }}</span>
+
         <div class="menu-info">
           <h3>{{ item.title }}</h3>
           <p class="muted">{{ item.desc }}</p>
@@ -68,12 +76,17 @@ const menuItems = [
   max-width: 900px;
   margin: 0 auto;
 }
+
 .grid-menu {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min(100%, 260px), 1fr)
+  );
   gap: .8rem;
   margin-top: 1rem;
 }
+
 .menu-card {
   display: flex;
   align-items: flex-start;
@@ -84,30 +97,43 @@ const menuItems = [
   border: 1px solid var(--border, #e2e7e5);
   background: var(--surface, #ffffff);
   min-width: 0;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
-.menu-card:active { transform: scale(.98); }
+
+.menu-card:active {
+  transform: scale(.98);
+}
+
 @media (hover: hover) {
   .menu-card:hover {
     border-color: var(--primary, #0f766e);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
 }
+
 .icon {
   font-size: 1.8rem;
   flex: none;
 }
-.menu-info { min-width: 0; }
+
+.menu-info {
+  min-width: 0;
+}
+
 .menu-info h3 {
   margin: 0 0 4px;
   font-size: 1rem;
   font-weight: 600;
 }
+
 .menu-info p {
   margin: 0;
   font-size: 0.85rem;
 }
+
 .muted {
   color: var(--muted, #62716c);
 }

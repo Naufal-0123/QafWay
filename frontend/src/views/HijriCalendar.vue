@@ -305,11 +305,6 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
       <li><strong>Dilarang</strong>: 1 Syawal, 10 Dzulhijjah, dan Hari Tasyriq (11-13 Dzulhijjah).</li>
     </ul>
   </details>
-
-  <p class="muted note">
-    Tanggal dihitung dengan metode tabular dan bisa berbeda satu hari dari
-    penetapan Kemenag.
-  </p>
 </template>
 
 <style scoped>
