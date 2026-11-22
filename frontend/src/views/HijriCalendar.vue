@@ -204,14 +204,14 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 
   <div class="cal-head">
     <button class="btn" aria-label="Bulan sebelumnya" @click="shift(-1)">
-      ←
+      ‹
     </button>
     <div class="cal-title">
       <strong>{{ monthNames[month - 1] }} {{ year }}</strong>
       <small class="muted">{{ hijriRange }}</small>
     </div>
     <button class="btn" aria-label="Bulan berikutnya" @click="shift(1)">
-      →
+      ›
     </button>
   </div>
 
@@ -293,24 +293,37 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
     </ul>
   </section>
 
-  <!-- Panduan Keterangan Jenis Puasa (Dipindah dari FastingView) -->
-  <details class="guide">
-  <summary class="guide-toogle">
-    <span class="guide-label">
-      <span class="guide-icon" aria-hidden="true">📖</span>
-      <span>Keterangan jenis puasa</span>
-    </span>
-    <span class="guide-chevron" aria-hidden="true">›</span>
-  </summary>
-  <ul class="guide-list">
-    <li><strong>Senin dan Kamis</strong>: setiap pekan.</li>
-    <li><strong>Ayyamul Bidh</strong>: tanggal 13, 14, 15 setiap bulan Hijriyah.</li>
-    <li><strong>Tasu'a dan Asyura</strong>: 9 dan 10 Muharram.</li>
-    <li><strong>Arafah</strong>: 9 Dzulhijjah (bagi yang tidak berhaji).</li>
-    <li><strong>Syawal</strong>: enam hari di bulan Syawal; di sini ditandai tanggal 2-7 Syawal, tetapi boleh hari lain dalam Syawal.</li>
-    <li><strong>Dilarang</strong>: 1 Syawal, 10 Dzulhijjah, dan Hari Tasyriq (11-13 Dzulhijjah).</li>
-  </ul>
-</details>
+  <!-- Keterangan jenis puasa (gaya tombol sama dengan "Jadwal sebulan" di Jadwal Sholat) -->
+  <details class="month">
+    <summary class="month-toggle">
+      <span class="month-toggle-content">
+        <span class="month-icon" aria-hidden="true">📖</span>
+        <span>Keterangan jenis puasa</span>
+      </span>
+
+      <span class="month-arrow" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </span>
+    </summary>
+
+    <ul class="card guide-list">
+      <li><strong>Senin dan Kamis</strong>: setiap pekan.</li>
+      <li><strong>Ayyamul Bidh</strong>: tanggal 13, 14, 15 setiap bulan Hijriyah.</li>
+      <li><strong>Tasu'a dan Asyura</strong>: 9 dan 10 Muharram.</li>
+      <li><strong>Arafah</strong>: 9 Dzulhijjah (bagi yang tidak berhaji).</li>
+      <li><strong>Syawal</strong>: enam hari di bulan Syawal; di sini ditandai tanggal 2-7 Syawal, tetapi boleh hari lain dalam Syawal.</li>
+      <li><strong>Dilarang</strong>: 1 Syawal, 10 Dzulhijjah, dan Hari Tasyriq (11-13 Dzulhijjah).</li>
+    </ul>
+  </details>
 </template>
 
 <style scoped>
@@ -337,13 +350,18 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
   border-color: var(--primary, #0f766e);
   font-weight: bold;
 }
+/* Sel terpilih memakai hijau muda yang sama dengan baris hari ini pada tabel Jadwal Sholat */
 .cal-day.selected {
-  background: var(--primary, #0f766e) !important;
-  color: var(--on-primary, #fff) !important;
+  background: var(--primary-soft, #dcf1ed) !important;
+  border-color: var(--primary, #0f766e);
+  color: var(--text, #17201e) !important;
+}
+.cal-day.selected .greg {
+  color: var(--text, #17201e);
 }
 .cal-day.selected .muted,
 .cal-day.selected .hij {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--muted, #62716c);
 }
 
 /* Styling Kartu Puasa Sunnah Berikutnya */
@@ -365,7 +383,6 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
   opacity: 0.85;
 }
 .cal-day.selected .fasting-dash {
-  background-color: #fff;
   opacity: 1;
 }
 
@@ -397,70 +414,114 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
   color: var(--error, #b42318);
 }
 
-/* Styling Panduan Keterangan Jenis Puasa */
-/* .guide { margin: 1.5rem 0 1rem; }
-.guide summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--primary, #0f766e); font-weight: 600; }
-.guide ul { margin: 4px 0 0; padding-left: 1.1rem; font-size: .9rem; line-height: 1.6; color: var(--muted, #62716c); } */
-
-.guide {
-  width: 100%;
+/* Navigasi bulan: ukuran tombol sama dengan Jadwal Sholat */
+.cal-head button {
+  min-width: 42px;
+  min-height: 42px;
 }
 
-.guide-toogle {
+/* Tombol keterangan puasa: gaya sama dengan tombol "Jadwal sebulan" di Jadwal Sholat */
+.month {
+  margin-top: 1.2rem;
+}
+
+.month-toggle {
+  cursor: pointer;
   list-style: none;
+  width: 100%;
+  min-height: 50px;
+  box-sizing: border-box;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  min-height: 52px;
-  padding: 12px 18px;
-  border-radius: 16px;
-  background-color: #2b6a4e;
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
+  gap: .8rem;
+
+  padding: .8rem 1rem;
+
+  background: var(--primary);
+  color: var(--on-primary, #ffffff);
+
+  border: 1px solid var(--primary);
+  border-radius: 14px;
+
+  font-weight: 700;
+  font-size: 1rem;
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .12);
+
+  transition:
+    background .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
 }
 
-.guide-toogle::-webkit-details-marker {
+.month-toggle::-webkit-details-marker {
   display: none;
 }
 
-.guide-toogle:hover {
-  background-color: #235840;
+.month-toggle::marker {
+  content: '';
 }
 
-.guide-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.guide-chevron {
-  display: inline-flex;
+.month-toggle-content {
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 9999px;
-  background-color: rgba(255, 255, 255, 0.14);
-  font-size: 1rem;
-  line-height: 1;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  gap: .65rem;
+  flex: 1;
 }
 
-.guide[open] .guide-chevron {
-  transform: rotate(180deg);
+.month-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
 }
 
+.month-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+
+  transition: transform .2s ease;
+}
+
+.month-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Saat dibuka, panah berputar ke bawah */
+.month[open] .month-arrow {
+  transform: rotate(90deg);
+}
+
+.month-toggle:hover {
+  filter: brightness(.92);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, .16);
+}
+
+.month-toggle:active {
+  transform: scale(.98);
+}
+
+.month-toggle:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 3px;
+}
+
+/* Daftar keterangan: kartu biasa yang mengikuti tema (tidak lagi memakai warna tetap) */
 .guide-list {
-  margin-top: 12px;
-  padding: 16px 20px 16px 36px;
-  border-radius: 16px;
-  background-color: #f6f1e4; /* Samakan dengan warna kartu krem utama */
-  border: 1px solid #d8d0be;
-  color: #1f2937;
+  margin: .8rem 0 0;
+  padding: 1rem 1.2rem 1rem 2.2rem;
   line-height: 1.65;
 }
 </style>
