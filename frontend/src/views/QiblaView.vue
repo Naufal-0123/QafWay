@@ -11,7 +11,9 @@ const manual = ref(false)
 const latInput = ref('')
 const lngInput = ref('')
 
-/* ---------- Sensor kompas ---------- */
+/* =========================
+   SENSOR KOMPAS HP
+========================= */
 
 const heading = ref(null)
 const compassOn = ref(false)
@@ -36,7 +38,7 @@ function normalizeAngle(value) {
 function onOrientation(e) {
   let newHeading = null
 
-  // iPhone / Safari: heading dari kompas magnetik
+  // iPhone / Safari
   if (
     typeof e.webkitCompassHeading === 'number' &&
     Number.isFinite(e.webkitCompassHeading)
@@ -45,7 +47,7 @@ function onOrientation(e) {
     sensorMode.value = 'Kompas magnetik'
   }
 
-  // Android / browser yang mendukung absolute orientation
+  // Android absolute orientation
   else if (
     typeof e.alpha === 'number' &&
     Number.isFinite(e.alpha) &&
@@ -57,7 +59,7 @@ function onOrientation(e) {
     sensorMode.value = 'Sensor orientasi'
   }
 
-  // Fallback jika browser tidak memberikan absolute
+  // Fallback browser
   else if (
     typeof e.alpha === 'number' &&
     Number.isFinite(e.alpha)
@@ -71,14 +73,14 @@ function onOrientation(e) {
   if (newHeading === null) return
 
   heading.value = newHeading
-  sensorAccuracy.value = ''
 
   if (sensorMode.value.includes('terbatas')) {
     sensorAccuracy.value =
-      'Sensor tidak memberikan arah absolut. Arah mungkin kurang akurat.'
+      'Sensor tidak memberikan arah absolut. Hasil mungkin kurang akurat.'
+  } else {
+    sensorAccuracy.value = ''
   }
 
-  // Sensor berhasil mengirim data
   if (sensorTimeout) {
     clearTimeout(sensorTimeout)
     sensorTimeout = null
@@ -89,8 +91,9 @@ function onOrientation(e) {
 
 function handleOrientationError() {
   heading.value = null
+
   sensorMsg.value =
-    'Sensor tidak memberikan data arah. Pastikan perangkat memiliki sensor kompas dan izin sensor aktif.'
+    'Sensor tidak memberikan data arah. Pastikan perangkat mendukung sensor kompas.'
 }
 
 async function startCompass() {
@@ -101,7 +104,7 @@ async function startCompass() {
   try {
     if (!window.isSecureContext) {
       throw new Error(
-        'Kompas membutuhkan koneksi HTTPS atau localhost.'
+        'Kompas membutuhkan koneksi HTTPS.'
       )
     }
 
@@ -111,7 +114,7 @@ async function startCompass() {
       )
     }
 
-    // iOS 13+ memerlukan izin yang diminta lewat interaksi tombol
+    // iOS membutuhkan permintaan izin
     if (
       typeof DeviceOrientationEvent.requestPermission === 'function'
     ) {
@@ -120,12 +123,11 @@ async function startCompass() {
 
       if (permission !== 'granted') {
         throw new Error(
-          'Izin sensor ditolak. Izinkan akses Motion & Orientation.'
+          'Izin sensor ditolak. Aktifkan izin Motion & Orientation.'
         )
       }
     }
 
-    // Bersihkan listener lama agar tidak dobel
     stopCompass(false)
 
     window.addEventListener(
@@ -143,12 +145,12 @@ async function startCompass() {
     compassOn.value = true
     sensorMsg.value = 'Menunggu data sensor kompas…'
 
-    // Jika 5 detik tidak ada data, tampilkan pesan
     sensorTimeout = setTimeout(() => {
       if (heading.value === null) {
         handleOrientationError()
       }
     }, 5000)
+
   } catch (e) {
     compassOn.value = false
     sensorMsg.value = e.message
@@ -185,7 +187,9 @@ function stopCompass(updateMessage = true) {
 
 onBeforeUnmount(() => stopCompass(false))
 
-/* ---------- Lokasi dan perhitungan kiblat ---------- */
+/* =========================
+   LOKASI
+========================= */
 
 async function lookup(lat, lng) {
   loading.value = true
@@ -202,9 +206,11 @@ async function lookup(lat, lng) {
 }
 
 function useMyLocation() {
+  manual.value = false
+
   if (!navigator.geolocation) {
     error.value =
-      'Browser ini tidak mendukung penentuan lokasi. Isi koordinat secara manual.'
+      'Browser tidak mendukung lokasi. Silakan isi koordinat manual.'
     manual.value = true
     return
   }
@@ -224,14 +230,14 @@ function useMyLocation() {
 
       error.value =
         err.code === 1
-          ? 'Izin lokasi ditolak. Izinkan lokasi di pengaturan situs, atau isi koordinat manual.'
-          : 'Lokasi tidak dapat ditentukan. Coba lagi atau isi koordinat manual.'
+          ? 'Izin lokasi ditolak. Anda dapat menggunakan koordinat manual.'
+          : 'Lokasi tidak dapat ditentukan. Silakan coba lagi atau masukkan koordinat manual.'
     },
     {
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 60000,
-    },
+    }
   )
 }
 
@@ -253,21 +259,21 @@ function submitManual() {
     lng > 180
   ) {
     error.value =
-      'Koordinat tidak valid. Lintang -90 sampai 90, bujur -180 sampai 180.'
+      'Koordinat tidak valid. Lintang harus -90 sampai 90 dan bujur -180 sampai 180.'
     return
   }
 
   lookup(lat, lng)
 }
 
-/* ---------- Arah kompas ---------- */
+/* =========================
+   PERHITUNGAN ARAH KOMPAS
+========================= */
 
-// Putar dial mengikuti arah hadap HP
 const dial = computed(() =>
   heading.value === null ? 0 : -heading.value
 )
 
-// Selisih arah HP terhadap arah kiblat
 const diff = computed(() => {
   if (heading.value === null || !result.value) {
     return null
@@ -293,7 +299,9 @@ const turnLabel = computed(() => {
 
   const degree = Math.abs(Math.round(diff.value))
 
-  if (degree <= 3) return 'Sudah menghadap kiblat'
+  if (degree <= 3) {
+    return 'Sudah menghadap kiblat'
+  }
 
   return `Putar ${degree}° ke ${diff.value > 0 ? 'kanan' : 'kiri'}`
 })
@@ -301,57 +309,101 @@ const turnLabel = computed(() => {
 
 <template>
   <div class="qibla">
+
     <h1 class="title">Arah Kiblat</h1>
 
-    <section class="actions">
+    <!-- LOKASI -->
+    <section class="location-section">
+
       <button
-        class="btn primary"
+        class="btn primary location-button"
         :disabled="loading"
         @click="useMyLocation"
       >
-        <span aria-hidden="true">📍</span>
-        {{ loading ? 'Mencari lokasi…' : 'Gunakan lokasi saya' }}
+        <span>📍</span>
+
+        {{
+          loading
+            ? 'Mencari lokasi…'
+            : 'Gunakan lokasi saya'
+        }}
       </button>
 
+      <!-- INPUT MANUAL COLLAPSIBLE -->
       <button
-        class="btn"
+        class="btn manual-toggle"
         @click="manual = !manual"
       >
-        {{ manual ? 'Tutup input manual' : 'Isi koordinat manual' }}
+        <span>⌖</span>
+
+        {{
+          manual
+            ? 'Tutup koordinat manual'
+            : 'Isi koordinat manual'
+        }}
+
+        <span class="arrow" :class="{ open: manual }">
+          ▾
+        </span>
       </button>
+
+      <div
+        v-if="manual"
+        class="manual-panel"
+      >
+        <p class="manual-description">
+          Masukkan koordinat lokasi yang ingin dihitung arah kiblatnya.
+        </p>
+
+        <form
+          class="manual-form"
+          @submit.prevent="submitManual"
+        >
+          <label>
+            <span>Lintang (Latitude)</span>
+
+            <input
+              v-model="latInput"
+              type="text"
+              inputmode="decimal"
+              placeholder="-6.2088"
+            />
+          </label>
+
+          <label>
+            <span>Bujur (Longitude)</span>
+
+            <input
+              v-model="lngInput"
+              type="text"
+              inputmode="decimal"
+              placeholder="106.8456"
+            />
+          </label>
+
+          <button
+            type="submit"
+            class="btn primary calculate-button"
+            :disabled="loading"
+          >
+            {{ loading ? 'Menghitung…' : 'Hitung arah kiblat' }}
+          </button>
+        </form>
+
+        <button
+          class="example-button"
+          @click="
+            latInput = '-6.2088';
+            lngInput = '106.8456'
+          "
+        >
+          Isi contoh Jakarta
+        </button>
+      </div>
+
     </section>
 
-    <form
-      v-if="manual"
-      class="manual"
-      @submit.prevent="submitManual"
-    >
-      <label>
-        Lintang
-        <input
-          v-model="latInput"
-          inputmode="decimal"
-          placeholder="-6.2088"
-        />
-      </label>
-
-      <label>
-        Bujur
-        <input
-          v-model="lngInput"
-          inputmode="decimal"
-          placeholder="106.8456"
-        />
-      </label>
-
-      <button
-        class="btn primary"
-        type="submit"
-      >
-        Hitung
-      </button>
-    </form>
-
+    <!-- ERROR -->
     <p
       v-if="error"
       class="error"
@@ -359,10 +411,14 @@ const turnLabel = computed(() => {
       {{ error }}
     </p>
 
+    <!-- HASIL -->
     <template v-if="result">
-      <!-- Informasi arah kiblat -->
+
       <section class="result">
-        <span class="label">Arah kiblat dari utara</span>
+
+        <span class="label">
+          Arah kiblat dari utara
+        </span>
 
         <strong class="deg">
           {{ result.bearing.toFixed(1) }}°
@@ -374,18 +430,22 @@ const turnLabel = computed(() => {
 
         <small class="muted">
           Jarak ke Ka'bah ±
-          {{ Math.round(result.distanceKm).toLocaleString('id-ID') }} km
+          {{ Math.round(result.distanceKm).toLocaleString('id-ID') }}
+          km
         </small>
+
       </section>
 
-      <!-- Kompas -->
+      <!-- KOMPAS -->
       <section class="compass-container">
+
         <svg
           viewBox="0 0 220 220"
           class="compass"
           role="img"
-          :aria-label="`Kompas kiblat ${result.bearing.toFixed(0)} derajat`"
+          aria-label="Kompas arah kiblat"
         >
+
           <circle
             cx="110"
             cy="110"
@@ -393,15 +453,18 @@ const turnLabel = computed(() => {
             class="ring"
           />
 
-          <!-- Dial berputar mengikuti heading perangkat -->
+          <!-- DIAL -->
           <g
             class="dial"
-            :style="{ transform: `rotate(${dial}deg)` }"
+            :style="{
+              transform: `rotate(${dial}deg)`
+            }"
           >
+
             <text
               x="110"
               y="32"
-              class="cardinal n"
+              class="cardinal north"
             >
               U
             </text>
@@ -430,11 +493,14 @@ const turnLabel = computed(() => {
               B
             </text>
 
-            <!-- Arah kiblat relatif terhadap arah HP -->
+            <!-- ARAH KA'BAH -->
             <g
               class="qgroup"
-              :style="{ transform: `rotate(${result.bearing}deg)` }"
+              :style="{
+                transform: `rotate(${result.bearing}deg)`
+              }"
             >
+
               <line
                 x1="110"
                 y1="110"
@@ -451,10 +517,12 @@ const turnLabel = computed(() => {
               >
                 🕋
               </text>
+
             </g>
+
           </g>
 
-          <!-- Penanda bagian atas HP -->
+          <!-- PENANDA ARAH ATAS HP -->
           <polygon
             points="110,4 103,18 117,18"
             class="pointer"
@@ -467,29 +535,38 @@ const turnLabel = computed(() => {
             r="5"
             class="hub"
           />
+
         </svg>
 
-        <!-- Heading digital -->
+        <!-- HEADING HP -->
         <div
           v-if="compassOn"
           class="heading-display"
         >
-          <span class="heading-label">Arah HP</span>
-          <strong>{{ headingLabel }}</strong>
+          <span class="heading-label">
+            Arah HP
+          </span>
+
+          <strong>
+            {{ headingLabel }}
+          </strong>
         </div>
+
       </section>
 
-      <!-- Status arah -->
+      <!-- STATUS ARAH -->
       <div
         v-if="compassOn && heading !== null"
         class="direction-status"
         :class="{ aligned }"
       >
+
         <span class="status-indicator"></span>
 
         <strong>
           {{ turnLabel }}
         </strong>
+
       </div>
 
       <p
@@ -499,8 +576,9 @@ const turnLabel = computed(() => {
         {{ turnLabel }} untuk menghadap kiblat.
       </p>
 
-      <!-- Tombol sensor -->
+      <!-- AKTIFKAN KOMPAS -->
       <div class="compass-controls">
+
         <button
           v-if="!compassOn"
           class="btn primary compass-button"
@@ -516,19 +594,24 @@ const turnLabel = computed(() => {
         >
           Matikan kompas
         </button>
+
       </div>
 
-      <!-- Pesan sensor -->
+      <!-- PESAN SENSOR -->
       <div
         v-if="sensorMsg"
         class="sensor-message"
-        :class="{ warning: heading === null && compassOn }"
+        :class="{
+          warning: heading === null && compassOn
+        }"
       >
-        <span class="sensor-icon">
+
+        <span>
           {{ heading === null ? '⚠️' : '🧭' }}
         </span>
 
-        <span>{{ sensorMsg }}</span>
+        {{ sensorMsg }}
+
       </div>
 
       <p
@@ -542,60 +625,49 @@ const turnLabel = computed(() => {
         v-if="compassOn && heading !== null"
         class="sensor-mode muted center small"
       >
-        Sumber: {{ sensorMode }}
+        Sumber sensor: {{ sensorMode }}
       </p>
 
       <p
         v-if="!compassOn"
         class="muted center small"
       >
-        Aktifkan sensor kompas agar gambar bergerak mengikuti rotasi HP.
-        Pastikan HP dalam posisi mendatar.
+        Aktifkan sensor kompas agar kompas bergerak mengikuti rotasi HP.
+        Letakkan HP secara mendatar.
       </p>
+
     </template>
 
+    <!-- INFO -->
     <p class="muted note">
-      Arah dihitung dari koordinat Anda ke Ka'bah
+      Arah dihitung dari koordinat Anda menuju Ka'bah
       (21.4225°N, 39.8262°E) terhadap utara sejati.
       Sensor kompas HP dapat meleset beberapa derajat.
-      Jauhkan perangkat dari benda logam dan magnet,
-      lalu cocokkan dengan petunjuk arah saf masjid jika memungkinkan.
+      Jauhkan perangkat dari benda logam atau magnet.
     </p>
+
   </div>
 </template>
 
 <style scoped>
+
+.qibla {
+  width: 100%;
+}
+
+/* JUDUL */
+
 .title {
-  margin: 8px 0 12px;
+  margin: 8px 0 16px;
   font-size: 1.5rem;
 }
 
-.muted {
-  color: var(--muted, #62716c);
-}
+/* LOKASI */
 
-.error {
-  color: var(--error, #b42318);
-}
-
-.center {
-  text-align: center;
-}
-
-.small {
-  font-size: .82rem;
-}
-
-.note {
-  font-size: .8rem;
-  margin-top: 18px;
-  line-height: 1.6;
-}
-
-.actions {
+.location-section {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .btn {
@@ -607,6 +679,16 @@ const turnLabel = computed(() => {
   border: 1px solid var(--border, #e2e7e5);
   background: var(--surface, #f4f6f5);
   color: var(--text, #17201e);
+  transition: .2s ease;
+}
+
+.btn:active {
+  transform: scale(.98);
+}
+
+.btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
 }
 
 .btn.primary {
@@ -615,42 +697,106 @@ const turnLabel = computed(() => {
   color: var(--on-primary, #fff);
 }
 
-.btn:disabled {
-  opacity: .6;
-  cursor: default;
+.location-button {
+  width: 100%;
+  font-weight: 600;
 }
 
-.manual {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
+.manual-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  align-items: end;
-  margin: 12px 0;
+  width: 100%;
 }
 
-.manual label {
-  display: grid;
-  gap: 4px;
+.arrow {
+  transition: transform .2s ease;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+/* PANEL INPUT MANUAL */
+
+.manual-panel {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border, #e2e7e5);
+  background: var(--surface, #f4f6f5);
+  animation: slideDown .2s ease;
+}
+
+.manual-description {
+  margin: 0 0 12px;
   font-size: .85rem;
+  color: var(--muted, #62716c);
+  line-height: 1.5;
+}
+
+.manual-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.manual-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.manual-form label span {
+  font-size: .8rem;
   color: var(--muted, #62716c);
 }
 
-.manual input {
+.manual-form input {
+  width: 100%;
+  box-sizing: border-box;
   height: 46px;
   padding: 0 12px;
   font-size: 16px;
   border-radius: 10px;
   border: 1px solid var(--border, #e2e7e5);
-  background: var(--surface, #f4f6f5);
+  background: var(--background, #fff);
   color: var(--text, #17201e);
-  min-width: 0;
 }
+
+.calculate-button {
+  grid-column: 1 / -1;
+  width: 100%;
+  font-weight: 600;
+}
+
+.example-button {
+  margin-top: 10px;
+  border: none;
+  background: none;
+  color: var(--primary, #0f766e);
+  cursor: pointer;
+  font-size: .85rem;
+  padding: 4px 0;
+}
+
+/* ERROR */
+
+.error {
+  color: var(--error, #b42318);
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fee2e2;
+  font-size: .9rem;
+  margin: 12px 0;
+}
+
+/* HASIL ARAH */
 
 .result {
   display: grid;
   justify-items: center;
-  gap: 3px;
-  margin: 18px 0 4px;
+  gap: 4px;
+  margin: 22px 0 8px;
 }
 
 .result .label {
@@ -671,11 +817,24 @@ const turnLabel = computed(() => {
   font-weight: 600;
 }
 
-/* Kompas */
+.muted {
+  color: var(--muted, #62716c);
+}
+
+.center {
+  text-align: center;
+}
+
+.small {
+  font-size: .82rem;
+}
+
+/* KOMPAS */
+
 .compass-container {
   position: relative;
   width: min(86vw, 320px);
-  margin: 8px auto;
+  margin: 12px auto;
 }
 
 .compass {
@@ -703,8 +862,8 @@ const turnLabel = computed(() => {
   dominant-baseline: middle;
 }
 
-.cardinal.n {
-  fill: var(--error, #b42318);
+.cardinal.north {
+  fill: #dc2626;
 }
 
 .qline {
@@ -735,13 +894,14 @@ const turnLabel = computed(() => {
   fill: var(--text, #17201e);
 }
 
-/* Angka heading */
+/* ANGKA HEADING */
+
 .heading-display {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin-top: -8px;
+  margin-top: -6px;
 }
 
 .heading-label {
@@ -755,7 +915,8 @@ const turnLabel = computed(() => {
   font-variant-numeric: tabular-nums;
 }
 
-/* Status arah kiblat */
+/* STATUS */
+
 .direction-status {
   display: flex;
   align-items: center;
@@ -782,11 +943,12 @@ const turnLabel = computed(() => {
   flex-shrink: 0;
 }
 
-/* Kontrol sensor */
+/* SENSOR */
+
 .compass-controls {
   display: flex;
   justify-content: center;
-  margin: 12px 0;
+  margin: 14px 0;
 }
 
 .compass-button {
@@ -794,14 +956,13 @@ const turnLabel = computed(() => {
   font-weight: 600;
 }
 
-/* Informasi sensor */
 .sensor-message {
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: 8px;
   margin: 12px auto;
-  padding: 10px 14px;
+  padding: 12px;
   border-radius: 12px;
   background: var(--primary-soft, #e3f1ec);
   color: var(--primary, #0f766e);
@@ -815,10 +976,6 @@ const turnLabel = computed(() => {
   color: #856404;
 }
 
-.sensor-icon {
-  flex-shrink: 0;
-}
-
 .accuracy-warning {
   text-align: center;
   font-size: .82rem;
@@ -830,22 +987,44 @@ const turnLabel = computed(() => {
   margin: 4px 0;
 }
 
-/* Mobile */
+/* CATATAN */
+
+.note {
+  font-size: .8rem;
+  margin-top: 18px;
+  line-height: 1.6;
+}
+
+/* ANIMASI */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* MOBILE */
+
 @media (max-width: 480px) {
-  .manual {
-    grid-template-columns: 1fr 1fr;
+
+  .manual-form {
+    grid-template-columns: 1fr;
   }
 
-  .manual button {
-    grid-column: 1 / -1;
-  }
-
-  .actions .btn {
-    flex: 1;
+  .calculate-button {
+    grid-column: auto;
   }
 
   .compass-container {
     width: min(82vw, 300px);
   }
+
 }
+
 </style>
