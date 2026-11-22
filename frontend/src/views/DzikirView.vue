@@ -229,13 +229,6 @@ async function copyDzikir(d) {
         </div>
       </div>
     </article>
-
-    <p class="sumber muted">
-      Data: <a :href="DZIKIR_SUMBER.url" target="_blank" rel="noopener">{{ DZIKIR_SUMBER.nama }}</a>, disusun mengikuti
-      buku Dzikir Pagi-Petang karya Ustadz Yazid bin Abdul Qadir Jawas. Latin dan keterangan dalil lengkap:
-      <a :href="DZIKIR_SUMBER.rujukan[tab]" target="_blank" rel="noopener">alquran-indonesia.id</a>.
-      Mohon periksa kembali dengan rujukan terpercaya.
-    </p>
   </div>
 </template>
 
