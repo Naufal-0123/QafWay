@@ -295,7 +295,28 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 
   <!-- Panduan Keterangan Jenis Puasa (Dipindah dari FastingView) -->
   <details class="guide">
-    <summary>Keterangan jenis puasa</summary>
+    <summary class="guide-toogle">
+     <span class="guide-toggle-content">
+            <span class="guide-icon" aria-hidden="true">
+             📖
+            </span>
+
+            <span>Keterangan jenis puasa</span>
+          </span>
+
+          <span class="guide-arrow" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </span>
+    </summary>
     <ul>
       <li><strong>Senin dan Kamis</strong>: setiap pekan.</li>
       <li><strong>Ayyamul Bidh</strong>: tanggal 13, 14, 15 setiap bulan Hijriyah.</li>
@@ -392,7 +413,112 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 }
 
 /* Styling Panduan Keterangan Jenis Puasa */
-.guide { margin: 1.5rem 0 1rem; }
+/* .guide { margin: 1.5rem 0 1rem; }
 .guide summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--primary, #0f766e); font-weight: 600; }
-.guide ul { margin: 4px 0 0; padding-left: 1.1rem; font-size: .9rem; line-height: 1.6; color: var(--muted, #62716c); }
+.guide ul { margin: 4px 0 0; padding-left: 1.1rem; font-size: .9rem; line-height: 1.6; color: var(--muted, #62716c); } */
+
+.month {
+  margin-top: 1.2rem;
+}
+
+/* Tampilan summary menjadi tombol */
+.month-toggle {
+  cursor: pointer;
+  list-style: none;
+  width: 100%;
+  min-height: 50px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+
+  padding: .8rem 1rem;
+
+  background: var(--primary);
+  color: var(--on-primary, #ffffff);
+
+  border: 1px solid var(--primary);
+  border-radius: 14px;
+
+  font-weight: 700;
+  font-size: 1rem;
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .12);
+
+  transition:
+    background .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+/* Hilangkan marker bawaan browser */
+.guide-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.guide-toggle::marker {
+  content: '';
+}
+
+/* Ikon dan teks */
+.guide-toggle-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  flex: 1;
+}
+
+.guide-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* Panah */
+.guide-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+
+  transition: transform .2s ease;
+}
+
+.guide-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Saat jadwal dibuka, panah berputar */
+.guide[open] .month-arrow {
+  transform: rotate(90deg);
+}
+
+/* Hover */
+.guide-toggle:hover {
+  filter: brightness(.92);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, .16);
+}
+
+/* Saat ditekan */
+.guide-toggle:active {
+  transform: scale(.98);
+}
+
+/* Focus keyboard */
+.guide-toggle:focus-visible {
+  outline: 3px solid var(--primary-soft);
+  outline-offset: 3px;
+}
+
 </style>
