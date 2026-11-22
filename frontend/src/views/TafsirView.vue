@@ -111,8 +111,6 @@ watch(
           <p v-for="(p, i) in paras(t)" :key="i">{{ p }}</p>
         </div>
       </article>
-
-      <p class="muted note">Tafsir bersumber dari Kementerian Agama RI melalui equran.id.</p>
     </template>
   </div>
 </template>

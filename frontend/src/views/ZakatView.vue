@@ -199,10 +199,6 @@ const incomeResult = computed(() => {
         </template>
       </div>
     </section>
-
-    <p class="muted note">
-      Hasil ini hanya perkiraan. Untuk kasus khusus, tanyakan ke BAZNAS, LAZ resmi, atau ustadz setempat.
-    </p>
   </div>
 </template>
 

@@ -152,8 +152,6 @@ const dateLabel = (s) => {
       </ul>
     </section>
     <p v-else class="muted center">Belum ada bacaan tercatat.</p>
-
-    <p class="muted note">Data tersimpan di browser perangkat ini saja dan hilang jika data situs dibersihkan.</p>
   </div>
 </template>
 

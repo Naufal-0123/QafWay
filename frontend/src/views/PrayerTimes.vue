@@ -440,11 +440,6 @@ function isTodayRow(d) {
         </div>
         <p v-else class="muted center">Memuat…</p>
       </details>
-
-      <p class="muted note">
-        Waktu mengikuti zona waktu wilayah yang dipilih (data Bimas Islam Kemenag RI melalui equran.id).
-        Hitung mundur memakai jam perangkat Anda.
-      </p>
     </template>
   </div>
 </template>

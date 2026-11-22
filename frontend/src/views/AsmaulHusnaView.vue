@@ -113,10 +113,6 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onKey));
       </button>
     </div>
 
-    <p class="muted note">
-      Tulisan Arab, transliterasi, dan arti mengacu pada daftar Asmaul Husna Nahdlatul Ulama (NU Online)
-      sebagaimana dimuat detikJatim. Arti bisa sedikit berbeda antar sumber.
-    </p>
 
     <!-- Lembar detail -->
     <div v-if="selected" class="overlay" @click.self="close">
