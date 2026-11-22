@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import { KISAH_NABI } from '../data/kisahNabi'
 
 const query = ref('')
@@ -20,6 +20,57 @@ const filtered = computed(() => {
       .includes(q)
   )
 })
+
+const arabicNames = {
+  1: 'آدم',
+  2: 'إدريس',
+  3: 'نوح',
+  4: 'هود',
+  5: 'صالح',
+  6: 'إبراهيم',
+  7: 'لوط',
+  8: 'إسماعيل',
+  9: 'إسحاق',
+  10: 'يعقوب',
+  11: 'يوسف',
+  12: 'أيوب',
+  13: 'شعيب',
+  14: 'موسى',
+  15: 'هارون',
+  16: 'ذو الكفل',
+  17: 'داود',
+  18: 'سليمان',
+  19: 'إلياس',
+  20: 'اليسع',
+  21: 'يونس',
+  22: 'زكريا',
+  23: 'يحيى',
+  24: 'عيسى',
+  25: 'محمد'
+}
+
+/*
+ * URL ilustrasi statis.
+ * Gambar berupa lanskap dan suasana,
+ * bukan penggambaran nabi.
+ */
+const landscapeImages = [
+  'photo-1509316785289-025f5b846b35',
+  'photo-1470770841072-f978cf4d019e',
+  'photo-1500530855697-b586d89ba3ee',
+  'photo-1501785888041-af3ef285b470',
+  'photo-1464822759023-fed622ff2c3b',
+  'photo-1472396961693-142e6e269027',
+  'photo-1519681393784-d120267933ba',
+  'photo-1470252649378-9c29740c9fa8'
+]
+
+function illustrationUrl(n, width = 1200, height = 800) {
+  const photo =
+    landscapeImages[(Number(n.no) - 1) % landscapeImages.length]
+
+  return `https://images.unsplash.com/${photo}?auto=format&fit=crop&w=${width}&h=${height}&q=82`
+}
 
 function open(no) {
   selectedNo.value = no
@@ -42,69 +93,24 @@ function step(delta) {
   selectedNo.value = KISAH_NABI[nextIndex].no
 }
 
-/*
-|--------------------------------------------------------------------------
-| Ilustrasi Nabi
-|--------------------------------------------------------------------------
-| Menggunakan URL generator gambar online.
-| Tidak perlu mengunduh atau menyimpan gambar.
-| Ilustrasi dibuat tanpa menampilkan sosok nabi.
-*/
+/* Mengunci scroll halaman saat modal dibuka */
+let previousBodyOverflow = ''
 
-const illustrationPrompts = {
-  1: 'beautiful lush heavenly garden, flowing rivers, glowing soft light, symbolic first human creation story, no people',
-  2: 'ancient peaceful landscape, beautiful mountains, sunrise, scroll and writing tools, wisdom and knowledge, no people',
-  3: 'huge wooden ark on a mountain after a great flood, dramatic clouds clearing, water reflections, no people',
-  4: 'ancient desert city of Aad, huge sandstone architecture, dramatic desert wind and clouds, no people',
-  5: 'ancient Thamud rocky city, carved stone houses, desert landscape, camel standing peacefully, no people',
-  6: 'ancient desert landscape, Kaaba construction with stone blocks, mountains, warm sunrise, no people',
-  7: 'ancient city near the Dead Sea, abandoned stone buildings, dramatic desert landscape, no people',
-  8: 'desert valley near Mecca, Zamzam water spring, ancient stone Kaaba, desert mountains, no people',
-  9: 'beautiful ancient Canaan landscape, green hills, olive trees, peaceful sunrise, no people',
-  10: 'ancient countryside with olive groves, desert hills, peaceful landscape, warm sunset, no people',
-  11: 'ancient Egyptian palace, grain storage silos, wheat fields, golden sunlight, no people',
-  12: 'quiet ancient village, green plants growing after rain, healing water spring, peaceful nature, no people',
-  13: 'ancient Midian marketplace, stone buildings, balance scales, baskets of grain, no people',
-  14: 'ancient Egypt, parted sea with towering walls of water, path across the sea, dramatic cinematic scene, no people',
-  15: 'ancient Egypt desert landscape, mountain and glowing sunrise, scroll, peaceful atmosphere, no people',
-  16: 'ancient desert kingdom, peaceful mountain landscape, beautiful sunrise, symbolic patience, no people',
-  17: 'ancient Jerusalem, iron being shaped into armor, green mountains and birds, no people',
-  18: 'ancient palace of Solomon, magnificent architecture, birds, distant mountains, symbolic wisdom, no people',
-  19: 'ancient city of Nineveh, beautiful stone architecture, ship near coast, dramatic cloudy sky, no people',
-  20: 'ancient desert landscape, burning bush glowing on a mountain, night sky, symbolic divine calling, no people',
-  21: 'ancient desert palace, staffs on stone floor, glowing light, symbolic miracles, no people',
-  22: 'ancient desert city, caravan, sandstone architecture, peaceful landscape, no people',
-  23: 'ancient desert landscape, cave entrance, starry sky, symbolic revelation, no people',
-  24: 'ancient city of Medina, palm trees, mosque architecture, bright peaceful sky, no people',
-  25: 'ancient Mecca, Kaaba, mountains, sunrise, peaceful sacred atmosphere, no people'
-}
+watch(
+  () => selectedNo.value !== null,
+  (isOpen) => {
+    if (isOpen) {
+      previousBodyOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = previousBodyOverflow
+    }
+  }
+)
 
-function illustrationUrl(n, width = 1000, height = 700) {
-  const prompt = [
-    'Islamic historical storybook illustration,',
-    'soft elegant watercolor and digital painting,',
-    'warm cream and sage green palette,',
-    'beautiful detailed scenery, cinematic lighting,',
-    'respectful Islamic educational illustration,',
-    'no prophets depicted, no human faces, no human figures,',
-    illustrationPrompts[n.no] || 'beautiful ancient landscape'
-  ].join(' ')
-
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&seed=${n.no * 137}&nologo=true`
-}
-
-// Gambar cadangan apabila URL ilustrasi gagal dimuat
-const fallbackImage =
-  'https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1000&q=80'
-
-function onImageError(event) {
-  const img = event.target
-
-  if (img.dataset.fallback === 'true') return
-
-  img.dataset.fallback = 'true'
-  img.src = fallbackImage
-}
+onBeforeUnmount(() => {
+  document.body.style.overflow = previousBodyOverflow
+})
 </script>
 
 <template>
@@ -121,7 +127,7 @@ function onImageError(event) {
     </header>
 
     <!-- SEARCH -->
-    <div class="kisah-search">
+    <div class="kisah-search search">
       <input
         v-model="query"
         class="input"
@@ -133,7 +139,7 @@ function onImageError(event) {
       <button
         v-if="query"
         type="button"
-        class="clear-search"
+        class="clear"
         aria-label="Hapus pencarian"
         @click="query = ''"
       >
@@ -145,65 +151,61 @@ function onImageError(event) {
       Menampilkan {{ filtered.length }} dari 25 nabi
     </p>
 
-    <!-- LIST NABI -->
-    <div class="kisah-list">
-
+    <!-- CARD LIST -->
+    <div class="kisah-grid">
       <button
         v-for="n in filtered"
         :key="n.no"
         type="button"
-        class="card kisah-card"
+        class="card surah-card kisah-card"
         @click="open(n.no)"
       >
-
-        <!-- BINTANG PENOMORAN -->
-        <span class="kisah-star">
-          <span>{{ n.no }}</span>
+        <!-- BINTANG NOMOR -->
+        <span class="num">
+          {{ n.no }}
         </span>
 
-        <!-- CONTENT -->
-        <span class="kisah-content">
+        <!-- NAMA DAN RINGKASAN -->
+        <span class="meta">
           <strong>{{ n.nama }}</strong>
           <small>{{ n.ringkasan }}</small>
         </span>
 
-        <!-- THUMBNAIL ILUSTRASI -->
-        <span class="kisah-thumbnail">
-          <img
-            :src="illustrationUrl(n, 400, 300)"
-            :alt="`Ilustrasi kisah ${n.nama}`"
-            loading="lazy"
-            @error="onImageError"
-          />
-        </span>
-
-        <span class="kisah-arrow" aria-hidden="true">
-          ›
+        <!-- NAMA ARAB -->
+        <span
+          class="arab-name kisah-arab"
+          dir="rtl"
+          lang="ar"
+        >
+          {{ arabicNames[n.no] || 'نبي' }}
         </span>
       </button>
+    </div>
 
-      <!-- EMPTY SEARCH -->
-      <div v-if="filtered.length === 0" class="empty-state">
-        <div class="empty-icon">🔎</div>
-        <p>Nama atau kisah nabi tidak ditemukan.</p>
-        <button
-          class="btn"
-          type="button"
-          @click="query = ''"
-        >
-          Reset pencarian
-        </button>
-      </div>
+    <!-- EMPTY SEARCH -->
+    <div
+      v-if="filtered.length === 0"
+      class="empty-state muted"
+    >
+      <p>Nama atau kisah nabi tidak ditemukan.</p>
+
+      <button
+        class="btn"
+        type="button"
+        @click="query = ''"
+      >
+        Reset pencarian
+      </button>
     </div>
 
     <!-- CATATAN -->
     <p class="note muted">
       Kisah disajikan berdasarkan keterangan Al-Qur’an.
       Rincian yang tidak memiliki dasar kuat tidak dipastikan.
-      Ilustrasi merupakan gambaran suasana, bukan penggambaran nabi.
+      Ilustrasi hanya menggambarkan suasana, bukan sosok nabi.
     </p>
 
-    <!-- DETAIL MODAL -->
+    <!-- MODAL DETAIL -->
     <div
       v-if="selected"
       class="kisah-overlay"
@@ -216,7 +218,7 @@ function onImageError(event) {
         :aria-label="`Kisah ${selected.nama}`"
       >
 
-        <!-- CLOSE BUTTON -->
+        <!-- TOMBOL TUTUP -->
         <button
           type="button"
           class="kisah-close"
@@ -229,9 +231,9 @@ function onImageError(event) {
         <!-- HERO IMAGE -->
         <div class="kisah-hero">
           <img
-            :src="illustrationUrl(selected, 1200, 800)"
-            :alt="`Ilustrasi kisah ${selected.nama}`"
-            @error="onImageError"
+            :src="illustrationUrl(selected)"
+            :alt="`Ilustrasi suasana kisah ${selected.nama}`"
+            loading="lazy"
           />
 
           <div class="hero-overlay">
@@ -243,10 +245,10 @@ function onImageError(event) {
           </div>
         </div>
 
-        <!-- DETAIL NUMBER -->
+        <!-- NOMOR -->
         <div class="detail-top">
-          <span class="kisah-star large">
-            <span>{{ selected.no }}</span>
+          <span class="num">
+            {{ selected.no }}
           </span>
 
           <span class="muted">
@@ -254,12 +256,12 @@ function onImageError(event) {
           </span>
         </div>
 
-        <!-- SUMMARY -->
+        <!-- RINGKASAN -->
         <div class="detail-summary">
           {{ selected.ringkasan }}
         </div>
 
-        <!-- STORY -->
+        <!-- KISAH -->
         <h3 class="section-title">
           📖 Kisah
         </h3>
@@ -268,7 +270,7 @@ function onImageError(event) {
           {{ selected.kisah }}
         </div>
 
-        <!-- LESSONS -->
+        <!-- HIKMAH -->
         <h3 class="section-title">
           ✨ Hikmah yang dapat dipetik
         </h3>
@@ -282,7 +284,7 @@ function onImageError(event) {
           </li>
         </ul>
 
-        <!-- REFERENCES -->
+        <!-- REFERENSI -->
         <h3 class="section-title">
           📚 Rujukan Al-Qur’an
         </h3>
@@ -291,7 +293,7 @@ function onImageError(event) {
           {{ selected.referensi }}
         </div>
 
-        <!-- NAVIGATION -->
+        <!-- NAVIGASI -->
         <div class="detail-actions">
           <button
             type="button"
@@ -326,14 +328,16 @@ function onImageError(event) {
 
 <style scoped>
 
-/* =========================
+/* =========================================
    PAGE
-========================= */
+========================================= */
 
 .kisah-page {
   width: 100%;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .kisah-header h1 {
@@ -345,32 +349,38 @@ function onImageError(event) {
   line-height: 1.6;
 }
 
-/* =========================
+/* =========================================
    SEARCH
-========================= */
+========================================= */
 
 .kisah-search {
   position: relative;
   margin: 1rem 0 .5rem;
+  min-width: 0;
 }
 
-.kisah-search input {
+.kisah-search .input {
   width: 100%;
+  box-sizing: border-box;
   padding-right: 3rem;
 }
 
-.clear-search {
+.kisah-search .clear {
   position: absolute;
-  right: .45rem;
+  right: .35rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+
   border: 0;
-  border-radius: 50%;
+  background: none;
+
+  min-width: 44px;
+  min-height: 44px;
+
+  font-size: 1.1rem;
   color: var(--muted);
-  background: transparent;
   cursor: pointer;
+  border-radius: 50%;
 }
 
 .count {
@@ -378,159 +388,75 @@ function onImageError(event) {
   margin: .3rem 0 .8rem;
 }
 
-/* =========================
-   LIST
-========================= */
+/* =========================================
+   CARD GRID
+========================================= */
 
-.kisah-list {
+.kisah-grid {
   display: grid;
-  gap: .65rem;
+  gap: .7rem;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+
+  margin-top: .8rem;
+  min-width: 0;
 }
 
+/* Card mengikuti Surah Card */
 .kisah-card {
-  display: flex;
-  align-items: center;
-  gap: .8rem;
   width: 100%;
-  margin: 0;
-  padding: .8rem;
-  color: var(--text);
+  min-width: 0;
+  box-sizing: border-box;
+
   text-align: left;
   font: inherit;
   cursor: pointer;
-  transition: border-color .15s, transform .15s;
-  overflow: hidden;
 }
 
+.kisah-card .meta {
+  min-width: 0;
+}
+
+.kisah-card .meta strong,
+.kisah-card .meta small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kisah-card .meta small {
+  color: var(--muted);
+}
+
+/* Nama Arab */
+.kisah-arab {
+  flex: none;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+/* Hover */
 .kisah-card:hover {
   border-color: var(--primary);
 }
 
 .kisah-card:active {
-  transform: scale(.99);
+  transform: scale(.98);
 }
 
-/* =========================
-   STAR NUMBER
-   Mengikuti bentuk nomor
-   halaman daftar surat
-========================= */
-
-.kisah-star {
-  display: grid;
-  place-items: center;
-  position: relative;
-  flex: 0 0 2.7rem;
-  width: 2.7rem;
-  height: 2.7rem;
-
-  color: var(--primary);
-  background: var(--primary-soft);
-
-  font-weight: 700;
-  font-size: .82rem;
-
-  clip-path: polygon(
-    50% 0%,
-    61% 26%,
-    85% 14%,
-    75% 39%,
-    100% 50%,
-    75% 61%,
-    85% 86%,
-    61% 74%,
-    50% 100%,
-    39% 74%,
-    15% 86%,
-    25% 61%,
-    0% 50%,
-    25% 39%,
-    15% 14%,
-    39% 26%
-  );
-}
-
-.kisah-star span {
-  position: relative;
-  z-index: 1;
-}
-
-.kisah-star.large {
-  flex-basis: 3.2rem;
-  width: 3.2rem;
-  height: 3.2rem;
-  font-size: 1rem;
-}
-
-/* =========================
-   CARD CONTENT
-========================= */
-
-.kisah-content {
-  min-width: 0;
-  display: grid;
-  gap: .25rem;
-  flex: 1;
-}
-
-.kisah-content strong {
-  font-size: .95rem;
-}
-
-.kisah-content small {
-  font-size: .8rem;
-  line-height: 1.5;
-  color: var(--muted);
-
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* =========================
-   CARD IMAGE
-========================= */
-
-.kisah-thumbnail {
-  flex: 0 0 74px;
-  width: 74px;
-  height: 58px;
-  overflow: hidden;
-  border-radius: 10px;
-  background: var(--primary-soft);
-}
-
-.kisah-thumbnail img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.kisah-arrow {
-  color: var(--muted);
-  font-size: 1.4rem;
-}
-
-/* =========================
+/* =========================================
    EMPTY STATE
-========================= */
+========================================= */
 
 .empty-state {
   text-align: center;
-  padding: 2rem 1rem;
-  color: var(--muted);
+  padding: 1.5rem 1rem;
 }
 
-.empty-icon {
-  font-size: 2rem;
-  margin-bottom: .5rem;
-}
-
-/* =========================
+/* =========================================
    NOTE
-========================= */
+========================================= */
 
 .note {
   font-size: .8rem;
@@ -538,9 +464,9 @@ function onImageError(event) {
   margin-top: 1rem;
 }
 
-/* =========================
-   MODAL
-========================= */
+/* =========================================
+   OVERLAY
+========================================= */
 
 .kisah-overlay {
   position: fixed;
@@ -550,10 +476,17 @@ function onImageError(event) {
   background: rgba(0, 0, 0, .5);
 
   display: grid;
-  place-items: end center;
+  place-items: center;
 
-  padding: 0;
+  padding: 12px;
+  box-sizing: border-box;
+
+  overflow: hidden;
 }
+
+/* =========================================
+   MODAL
+========================================= */
 
 .kisah-sheet {
   position: relative;
@@ -562,33 +495,41 @@ function onImageError(event) {
   color: var(--text);
 
   width: min(100%, 800px);
+  height: min(94dvh, 100%);
   max-height: 94dvh;
+  min-height: 0;
+
+  box-sizing: border-box;
 
   overflow-y: auto;
+  overflow-x: hidden;
+
+  overscroll-behavior: contain;
+
+  /* Sembunyikan scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
   border: 1px solid var(--border);
-  border-radius: 22px 22px 0 0;
+  border-radius: 22px;
 
   padding: 0 1.15rem 1.2rem;
 }
 
-/* DESKTOP */
-
-@media (min-width: 700px) {
-  .kisah-overlay {
-    padding: 1rem;
-    place-items: center;
-  }
-
-  .kisah-sheet {
-    border-radius: 22px;
-    max-height: 90dvh;
-  }
+.kisah-sheet::-webkit-scrollbar {
+  display: none;
 }
 
-/* =========================
-   CLOSE
-========================= */
+/* Mencegah overflow elemen */
+.kisah-sheet,
+.kisah-sheet * {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
 
 .kisah-close {
   position: absolute;
@@ -602,32 +543,38 @@ function onImageError(event) {
   width: 40px;
   height: 40px;
 
-  background: rgba(255, 255, 255, .88);
+  background: rgba(255, 255, 255, .9);
   color: #514735;
 
   cursor: pointer;
   font-size: 1rem;
 }
 
-/* =========================
+/* =========================================
    HERO IMAGE
-========================= */
+========================================= */
 
 .kisah-hero {
   position: relative;
+
   width: calc(100% + 2.3rem);
+  max-width: none;
+
   margin-left: -1.15rem;
-  height: 240px;
+
+  height: clamp(170px, 30vh, 260px);
 
   overflow: hidden;
-  border-radius: 22px 22px 0 0;
+
+  border-radius: 21px 21px 0 0;
+
   background: var(--primary-soft);
 }
 
 .kisah-hero img {
+  display: block;
   width: 100%;
   height: 100%;
-  display: block;
   object-fit: cover;
 }
 
@@ -660,9 +607,9 @@ function onImageError(event) {
   font-size: 1.7rem;
 }
 
-/* =========================
+/* =========================================
    DETAIL TOP
-========================= */
+========================================= */
 
 .detail-top {
   display: flex;
@@ -671,9 +618,14 @@ function onImageError(event) {
   margin: 1rem 0;
 }
 
-/* =========================
+.detail-top .num {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+/* =========================================
    SUMMARY
-========================= */
+========================================= */
 
 .detail-summary {
   margin: 0;
@@ -683,11 +635,16 @@ function onImageError(event) {
   border-radius: 14px;
 
   line-height: 1.7;
+
+  text-align: justify;
+  text-justify: inter-word;
+
+  overflow-wrap: anywhere;
 }
 
-/* =========================
-   STORY
-========================= */
+/* =========================================
+   SECTION TITLE
+========================================= */
 
 .section-title {
   margin: 1.4rem 0 .6rem;
@@ -695,15 +652,27 @@ function onImageError(event) {
   color: var(--primary);
 }
 
+/* =========================================
+   STORY
+========================================= */
+
 .story-text {
   line-height: 1.9;
   font-size: .97rem;
+
   white-space: pre-line;
+
+  text-align: justify;
+  text-justify: inter-word;
+
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
 }
 
-/* =========================
+/* =========================================
    LESSONS
-========================= */
+========================================= */
 
 .lessons {
   padding-left: 1.3rem;
@@ -713,11 +682,16 @@ function onImageError(event) {
 
 .lessons li {
   margin: .5rem 0;
+
+  text-align: justify;
+  text-justify: inter-word;
+
+  overflow-wrap: anywhere;
 }
 
-/* =========================
+/* =========================================
    REFERENCES
-========================= */
+========================================= */
 
 .references {
   border: 1px solid var(--border);
@@ -728,17 +702,23 @@ function onImageError(event) {
 
   font-size: .9rem;
   line-height: 1.7;
+
+  text-align: justify;
+  text-justify: inter-word;
+
+  overflow-wrap: anywhere;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* =========================================
+   DETAIL BUTTONS
+========================================= */
 
 .detail-actions {
   display: flex;
   justify-content: space-between;
   gap: .5rem;
   flex-wrap: wrap;
+
   margin-top: 1.3rem;
 }
 
@@ -747,43 +727,60 @@ function onImageError(event) {
   min-width: 95px;
 }
 
-/* =========================
+/* =========================================
    MOBILE
-========================= */
+========================================= */
 
 @media (max-width: 480px) {
+
+  .kisah-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .kisah-card {
-    gap: .6rem;
-    padding: .7rem;
+    gap: .65rem;
+    padding: .85rem;
   }
 
-  .kisah-star {
-    flex-basis: 2.4rem;
-    width: 2.4rem;
-    height: 2.4rem;
-    font-size: .75rem;
+  .kisah-card .num {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
-  .kisah-thumbnail {
-    flex-basis: 60px;
-    width: 60px;
-    height: 50px;
+  .kisah-arab {
+    font-size: 1.25rem;
   }
 
-  .kisah-content strong {
-    font-size: .9rem;
+  .kisah-overlay {
+    padding: 7px;
   }
 
-  .kisah-content small {
-    font-size: .75rem;
+  .kisah-sheet {
+    width: 100%;
+    height: 96dvh;
+    max-height: 96dvh;
+
+    padding: 0 .85rem .9rem;
+
+    border-radius: 17px;
   }
 
   .kisah-hero {
-    height: 200px;
+    width: calc(100% + 1.7rem);
+    margin-left: -.85rem;
+
+    height: 190px;
+
+    border-radius: 16px 16px 0 0;
   }
 
   .hero-overlay h2 {
     font-size: 1.4rem;
+  }
+
+  .story-text {
+    font-size: .94rem;
+    line-height: 1.85;
   }
 
   .detail-actions {
