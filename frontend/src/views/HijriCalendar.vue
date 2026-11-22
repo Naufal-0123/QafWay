@@ -407,34 +407,20 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 }
 
 .guide-toogle {
-  cursor: pointer;
   list-style: none;
-  width: 100%;
-  min-height: 50px;
-  box-sizing: border-box;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: .8rem;
-
-  padding: .8rem 1rem;
-
-  background: var(--primary);
-  color: var(--on-primary, #ffffff);
-
-  border: 1px solid var(--primary);
-  border-radius: 14px;
-
-  font-weight: 700;
-  font-size: 1rem;
-
-  box-shadow: 0 3px 8px rgba(0, 0, 0, .12);
-
-  transition:
-    background .2s ease,
-    transform .2s ease,
-    box-shadow .2s ease;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background-color: #2b6a4e;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
 }
 
 .guide-toogle::-webkit-details-marker {
@@ -452,22 +438,29 @@ const dayNum = (d) => Number(d.gregorian.slice(8))
 }
 
 .guide-chevron {
-  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.14);
+  font-size: 1rem;
   line-height: 1;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-/* Putar ikon panah ke bawah saat daftar terbuka */
 .guide[open] .guide-chevron {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
 }
 
 .guide-list {
-  margin-top: 10px;
-  padding: 14px 18px 14px 34px;
-  border-radius: 14px;
-  background-color: #f7f4eb;
-  border: 1px solid #dfd8c8;
-  line-height: 1.6;
+  margin-top: 12px;
+  padding: 16px 20px 16px 36px;
+  border-radius: 16px;
+  background-color: #f6f1e4; /* Samakan dengan warna kartu krem utama */
+  border: 1px solid #d8d0be;
+  color: #1f2937;
+  line-height: 1.65;
 }
 </style>
