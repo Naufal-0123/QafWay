@@ -13,6 +13,7 @@ import DzikirView from "../views/DzikirView.vue";
 import ZakatView from "../views/ZakatView.vue";
 import AsmaulHusnaView from "../views/AsmaulHusnaView.vue";
 import KisahNabiView from "../views/KisahNabiView.vue";
+import HaditsView from "../views/HaditsView.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -93,11 +94,18 @@ export default createRouter({
       component: AsmaulHusnaView,
     },
 
-    // FITUR BARU: CERITA 25 NABI
+    // Cerita 25 Nabi dan Rasul
     {
       path: "/kisah-nabi",
       name: "kisah-nabi",
       component: KisahNabiView,
+    },
+
+    // Hadits Arbain dan Hadits Populer
+    {
+      path: "/hadits",
+      name: "hadits",
+      component: HaditsView,
     },
   ],
 

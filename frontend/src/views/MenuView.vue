@@ -17,6 +17,12 @@ const menuItems = [
     path: '/kisah-nabi'
   },
   {
+    title: 'Hadits',
+    desc: 'Arbain Nawawi dan hadits populer shahih',
+    icon: '📜',
+    path: '/hadits'
+  },
+  {
     title: 'Tracker Tilawah',
     desc: 'Target dan progres khatam',
     icon: '📖',
