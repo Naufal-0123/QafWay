@@ -533,8 +533,8 @@ onUnmounted(() => {
 
         <!-- NOMOR -->
         <span class="num hadits-number">
-            {{ h.nomor }}
-        </span>
+           {{ activeTab === "populer" ? index + 1 : h.nomor }}
+       </span>
 
         <!-- JUDUL + PERAWI -->
         <span class="meta hadits-meta">
