@@ -108,11 +108,8 @@ async function loadArbain() {
     arbain.value = list
       .map(normalizeArbain)
       .sort((a, b) => a.nomor - b.nomor);
-
   } catch (err) {
-    error.value =
-      `${err.message}. Periksa koneksi internet atau coba lagi.`;
-
+    error.value = `${err.message}. Periksa koneksi internet atau coba lagi.`;
   } finally {
     loading.value = false;
   }
@@ -280,14 +277,16 @@ function switchMode(value) {
         type="button"
         @click="openHadits(h)"
       >
-        <span class="num">
+        <span class="num hadits-number">
           {{ h.nomor }}
         </span>
 
-        <span class="meta">
-          <strong>{{ h.judul }}</strong>
+        <span class="meta hadits-meta">
+          <strong class="hadits-title">
+            {{ h.judul }}
+          </strong>
 
-          <small>
+          <small class="hadits-source">
             {{
               h.sumber ||
               (mode === "arbain"
@@ -482,47 +481,109 @@ function switchMode(value) {
   margin: .3rem 0 .8rem;
 }
 
+/* LIST CARD */
 .hadits-list {
   display: grid;
-  gap: .7rem;
+  gap: .85rem;
   grid-template-columns:
-    repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    repeat(auto-fill, minmax(min(100%, 310px), 1fr));
   min-width: 0;
 }
 
 .hadits-card {
   width: 100%;
   min-width: 0;
+  min-height: 125px;
+  height: auto;
   box-sizing: border-box;
   text-align: left;
   font: inherit;
   cursor: pointer;
+
+  /* Card diperbesar */
+  padding: 1.15rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
-.hadits-card .meta {
+/* Nomor */
+.hadits-number {
+  flex: 0 0 2.8rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Area judul dan sumber */
+.hadits-meta {
+  flex: 1 1 auto;
   min-width: 0;
+  width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .55rem;
 }
 
-.hadits-card .meta strong,
-.hadits-card .meta small {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* JUDUL - TIDAK DIPOTONG */
+.hadits-card .hadits-title {
+  display: block;
+  width: 100%;
+  min-width: 0;
+
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.65;
+
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+
+  overflow-wrap: anywhere;
+  word-break: normal;
+
+  height: auto;
+  max-height: none;
+
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  -webkit-box-orient: unset;
 }
 
-.hadits-card .meta small {
+/* SUMBER */
+.hadits-card .hadits-source {
+  display: block;
+  width: 100%;
   color: var(--muted);
+
+  font-size: .78rem;
+  line-height: 1.5;
+
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
 }
 
+/* TEKS ARAB DI CARD */
 .hadits-card-arab {
-  flex: none;
-  max-width: 36%;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 25%;
   font-size: 1.3rem;
-  line-height: 1.4;
-  overflow: hidden;
-  white-space: nowrap;
+  line-height: 1.7;
+
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+
+  text-align: right;
 }
 
+/* Hover */
 .hadits-card:hover {
   border-color: var(--primary);
 }
@@ -561,13 +622,17 @@ function switchMode(value) {
   height: min(94dvh, 100%);
   max-height: 94dvh;
   min-height: 0;
+
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
+
   background: var(--surface);
   color: var(--text);
+
   border: 1px solid var(--border);
   border-radius: 22px;
   padding: 1.2rem;
@@ -589,10 +654,12 @@ function switchMode(value) {
   float: right;
   top: 0;
   z-index: 2;
+
   border: 0;
   border-radius: 50%;
   width: 40px;
   height: 40px;
+
   background: var(--primary-soft);
   color: var(--text);
   cursor: pointer;
@@ -610,6 +677,10 @@ function switchMode(value) {
 .hadits-detail-header h2 {
   margin: .45rem 0;
   font-size: 1.3rem;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .hadits-arab {
@@ -618,8 +689,10 @@ function switchMode(value) {
   text-align: right;
   padding: 1rem;
   margin: .5rem 0 1.3rem;
+
   background: var(--primary-soft);
   border-radius: 14px;
+
   overflow-wrap: anywhere;
 }
 
@@ -634,6 +707,7 @@ function switchMode(value) {
   line-height: 1.85;
   text-align: justify;
   text-justify: inter-word;
+
   overflow-wrap: anywhere;
   margin: .4rem 0;
 }
@@ -664,18 +738,32 @@ function switchMode(value) {
   }
 
   .hadits-card {
-    gap: .65rem;
-    padding: .85rem;
+    min-height: 115px;
+    gap: .7rem;
+    padding: 1rem;
   }
 
   .hadits-card .num {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .hadits-meta {
+    gap: .45rem;
+  }
+
+  .hadits-card .hadits-title {
+    font-size: .98rem;
+    line-height: 1.65;
+  }
+
+  .hadits-card .hadits-source {
+    font-size: .75rem;
   }
 
   .hadits-card-arab {
-    font-size: 1.1rem;
-    max-width: 30%;
+    font-size: 1.05rem;
+    max-width: 23%;
   }
 
   .hadits-overlay {
@@ -697,6 +785,29 @@ function switchMode(value) {
   .hadits-detail-actions .btn {
     font-size: .8rem;
     padding: .65rem .5rem;
+  }
+}
+
+/* HP SANGAT KECIL */
+@media (max-width: 360px) {
+  .hadits-card {
+    gap: .55rem;
+    padding: .85rem;
+  }
+
+  .hadits-number {
+    flex-basis: 2.35rem;
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+
+  .hadits-card-arab {
+    max-width: 20%;
+    font-size: .95rem;
+  }
+
+  .hadits-card .hadits-title {
+    font-size: .92rem;
   }
 }
 </style>

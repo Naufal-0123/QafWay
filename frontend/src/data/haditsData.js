@@ -1,88 +1,464 @@
-// Hadits populer pilihan dengan referensi kitab
-export const HADITS_POPULER = [
+export const HADITS_ARBAIN = [
   {
-    id: "p-1",
+    id: "arbain-1",
     nomor: 1,
-    judul: "Amal bergantung pada niat",
-    arab: "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى",
-    terjemah:
-      "Sesungguhnya amal-amal itu bergantung pada niat, dan setiap orang mendapatkan sesuai apa yang ia niatkan.",
-    sumber: "Shahih al-Bukhari, no. 1; Shahih Muslim, no. 1907",
-    catatan:
-      "Niat menjadi dasar nilai amal. Hadits ini mengingatkan agar ibadah dan kebaikan dilakukan dengan ikhlas karena Allah."
+    judul: "Amalan Bergantung pada Niat",
+    perawi: "Umar bin Al-Khaththab رضي الله عنه",
+    arab: "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ",
+    terjemah: "Nilai amal ditentukan oleh niatnya. Seseorang memperoleh sesuai tujuan yang diniatkannya.",
+    sumber: "HR. Bukhari 1 dan Muslim 1907",
+    catatan: "Niat menjadi dasar amalan dan menentukan tujuan seseorang dalam beribadah.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-2",
+    id: "arbain-2",
     nomor: 2,
-    judul: "Muslim menjaga lisan dan tangan",
-    arab: "الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ",
-    terjemah:
-      "Seorang Muslim adalah orang yang kaum Muslimin selamat dari gangguan lisan dan tangannya.",
-    sumber: "Shahih al-Bukhari, no. 10; Shahih Muslim, no. 40",
-    catatan:
-      "Keislaman tercermin dari perilaku yang tidak menyakiti orang lain, baik dengan perkataan maupun perbuatan."
+    judul: "Rukun Islam, Iman, dan Ihsan",
+    perawi: "Umar bin Al-Khaththab رضي الله عنه",
+    arab: "أَنْ تَعْبُدَ اللهَ كَأَنَّكَ تَرَاهُ",
+    terjemah: "Hadits menjelaskan Islam, iman, ihsan, tanda kiamat, dan kedatangan Malaikat Jibril untuk mengajarkan agama.",
+    sumber: "HR. Muslim 8",
+    catatan: "Agama mencakup amalan lahir, keyakinan, serta beribadah dengan kesadaran bahwa Allah mengawasi.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-3",
+    id: "arbain-3",
     nomor: 3,
-    judul: "Mencintai kebaikan untuk saudara",
-    arab: "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
-    terjemah:
-      "Tidak sempurna iman seseorang hingga ia mencintai untuk saudaranya apa yang ia cintai untuk dirinya sendiri.",
-    sumber: "Shahih al-Bukhari, no. 13; Shahih Muslim, no. 45",
-    catatan:
-      "Seorang mukmin hendaknya memiliki kepedulian, tidak iri, dan turut menginginkan kebaikan bagi sesama."
+    judul: "Islam Dibangun di atas Lima Dasar",
+    perawi: "Abdullah bin Umar رضي الله عنهما",
+    arab: "بُنِيَ الإِسْلاَمُ عَلَى خَمْسٍ",
+    terjemah: "Islam berdiri di atas lima rukun: syahadat, shalat, zakat, haji, dan puasa Ramadhan.",
+    sumber: "HR. Bukhari 8 dan Muslim 16",
+    catatan: "Lima rukun menjadi dasar utama kehidupan seorang Muslim.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-4",
+    id: "arbain-4",
     nomor: 4,
-    judul: "Berkata baik atau diam",
-    arab: "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ",
-    terjemah:
-      "Barang siapa beriman kepada Allah dan hari akhir, hendaklah ia berkata yang baik atau diam.",
-    sumber: "Shahih al-Bukhari, no. 6018; Shahih Muslim, no. 47",
-    catatan:
-      "Menjaga ucapan termasuk tanda iman. Sebelum berbicara, pertimbangkan apakah ucapan membawa manfaat."
+    judul: "Takdir Setiap Manusia Sudah Tertulis",
+    perawi: "Abdullah bin Mas'ud رضي الله عنه",
+    arab: "إِنَّ أَحَدَكُمْ يُجْمَعُ خَلْقُهُ فِي بَطْنِ أُمِّهِ",
+    terjemah: "Hadits menerangkan tahapan penciptaan manusia dan ketetapan rezeki, ajal, amal, serta keadaan akhir kehidupannya.",
+    sumber: "HR. Bukhari dan Muslim 2643",
+    catatan: "Hadits mengingatkan manusia untuk terus beramal dan tidak merasa aman dengan amalnya.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-5",
+    id: "arbain-5",
     nomor: 5,
-    judul: "Jangan marah",
-    arab: "لَا تَغْضَبْ",
-    terjemah: "Jangan marah.",
-    sumber: "Shahih al-Bukhari, no. 6116",
-    catatan:
-      "Nasihat Nabi ini mendorong pengendalian diri. Bukan berarti tidak merasakan marah, tetapi tidak membiarkannya menguasai tindakan."
+    judul: "Larangan Membuat Sesuatu yang Baru dalam Agama",
+    perawi: "Aisyah رضي الله عنها",
+    arab: "مَنْ أَحْدَثَ فِي أَمْرِنَا هَذَا مَا لَيْسَ مِنْهُ فَهُوَ رَدٌّ",
+    terjemah: "Perkara baru dalam agama yang tidak memiliki dasar dari ajaran Rasulullah ﷺ ditolak.",
+    sumber: "HR. Bukhari 2697 dan Muslim 1718",
+    catatan: "Ibadah harus memiliki dasar dan mengikuti tuntunan Rasulullah ﷺ.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-6",
+    id: "arbain-6",
     nomor: 6,
-    judul: "Bersuci adalah bagian dari iman",
-    arab: "الطُّهُورُ شَطْرُ الْإِيمَانِ",
-    terjemah: "Bersuci adalah separuh iman.",
-    sumber: "Shahih Muslim, no. 223",
-    catatan:
-      "Hadits menekankan kedudukan kebersihan dan bersuci, terutama dalam menjalankan ibadah."
+    judul: "Halal, Haram, dan Perkara Syubhat",
+    perawi: "Nu'man bin Basyir رضي الله عنه",
+    arab: "إِنَّ الحَلاَلَ بَيِّنٌ وَإِنَّ الحَرَامَ بَيِّنٌ",
+    terjemah: "Halal dan haram telah jelas, sementara perkara samar perlu dihindari agar agama dan kehormatan terjaga.",
+    sumber: "HR. Bukhari 52 dan Muslim 1599",
+    catatan: "Hadits juga menerangkan pentingnya menjaga hati karena baik atau rusaknya hati memengaruhi perilaku.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-7",
+    id: "arbain-7",
     nomor: 7,
-    judul: "Agama adalah nasihat",
-    arab: "الدِّينُ النَّصِيحَةُ",
-    terjemah: "Agama adalah nasihat (ketulusan dan menghendaki kebaikan).",
-    sumber: "Shahih Muslim, no. 55",
-    catatan:
-      "Nasihat mencakup ketulusan kepada Allah, kitab-Nya, Rasul-Nya, pemimpin, dan kaum Muslimin, sebagaimana penjelasan lanjutan hadits."
+    judul: "Agama Ini adalah Nasihat",
+    perawi: "Tamim Ad-Dari رضي الله عنه",
+    arab: "الدِّيْنُ النَّصِيْحَةُ",
+    terjemah: "Agama mengajarkan ketulusan dan menghendaki kebaikan bagi Allah, kitab-Nya, Rasul-Nya, pemimpin, dan umat.",
+    sumber: "HR. Muslim 55",
+    catatan: "Nasihat hendaknya disampaikan dengan tulus dan bertujuan membawa kebaikan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   },
   {
-    id: "p-8",
+    id: "arbain-8",
     nomor: 8,
-    judul: "Allah melihat hati dan amal",
-    arab: "إِنَّ اللَّهَ لَا يَنْظُرُ إِلَى صُوَرِكُمْ وَأَمْوَالِكُمْ، وَلَكِنْ يَنْظُرُ إِلَى قُلُوبِكُمْ وَأَعْمَالِكُمْ",
-    terjemah:
-      "Sesungguhnya Allah tidak melihat rupa dan harta kalian, tetapi Dia melihat hati dan amal kalian.",
-    sumber: "Shahih Muslim, no. 2564",
-    catatan:
-      "Nilai manusia tidak ditentukan oleh rupa atau harta, melainkan ketakwaan, keikhlasan, dan amalnya."
+    judul: "Terjaganya Darah dan Harta Seorang Muslim",
+    perawi: "Abdullah bin Umar رضي الله عنهما",
+    arab: "وَيُقِيْمُوْا الصَّلاَةَ وَيُؤْتُوْا الزَّكَاةَ",
+    terjemah: "Hadits menyebut prinsip syahadat, shalat, dan zakat serta perlindungan hak dan harta dalam ketentuan Islam.",
+    sumber: "HR. Bukhari 25 dan Muslim 22",
+    catatan: "Hak seseorang tidak boleh dilanggar dan perhitungan amal berada di sisi Allah.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-9",
+    nomor: 9,
+    judul: "Kerjakanlah Perintah yang Kamu Mampu",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "وَمَا أَمَرْتُكُمْ بِهِ فَأْتُوا مِنْهُ مَا اسْتَطَعْتُمْ",
+    terjemah: "Larangan harus dijauhi, sedangkan perintah dilaksanakan sesuai kemampuan.",
+    sumber: "HR. Bukhari 7288 dan Muslim 1337",
+    catatan: "Jangan memberatkan diri dengan pertanyaan berlebihan atau menyelisihi tuntunan para nabi.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-10",
+    nomor: 10,
+    judul: "Allah Maha Baik dan Hanya Menerima yang Baik",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "إِنَّ اللهَ تَعَالَى طَيِّبٌ لاَ يَقْبَلُ إِلاَّ طَيِّبَاً",
+    terjemah: "Allah menerima kebaikan. Makanan, minuman, dan penghasilan yang halal berkaitan dengan diterimanya doa.",
+    sumber: "HR. Muslim 1015",
+    catatan: "Seorang Muslim perlu memperhatikan sumber rezeki dan menjaga amal agar baik.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-11",
+    nomor: 11,
+    judul: "Tinggalkan Sesuatu yang Membuatmu Ragu",
+    perawi: "Al-Hasan bin Ali رضي الله عنهما",
+    arab: "دَعْ مَا يَرِيْبُكَ إِلَى مَا لاَ يَرِيْبُكَ",
+    terjemah: "Tinggalkan perkara yang menimbulkan keraguan dan pilih perkara yang lebih meyakinkan.",
+    sumber: "HR. Tirmidzi dan An-Nasa'i; dinilai hasan shahih oleh Tirmidzi",
+    catatan: "Hadits mengajarkan kehati-hatian dalam mengambil keputusan dan menjaga ketenangan hati.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-12",
+    nomor: 12,
+    judul: "Meninggalkan Perkara yang Tidak Bermanfaat",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "مِنْ حُسْنِ إِسْلامِ المَرْءِ تَرْكُهُ مَا لاَيَعْنِيْهِ",
+    terjemah: "Salah satu tanda baiknya Islam seseorang adalah meninggalkan hal yang tidak bermanfaat baginya.",
+    sumber: "HR. Tirmidzi; hadits Hasan",
+    catatan: "Gunakan waktu dan perhatian untuk perkara yang bermanfaat.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-13",
+    nomor: 13,
+    judul: "Mencintai Kebaikan untuk Saudaranya",
+    perawi: "Anas bin Malik رضي الله عنه",
+    arab: "لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيْهِ",
+    terjemah: "Iman belum sempurna hingga seseorang menginginkan kebaikan bagi saudaranya sebagaimana untuk dirinya.",
+    sumber: "HR. Bukhari dan Muslim",
+    catatan: "Membangun persaudaraan, menghindari dengki, dan senang melihat orang lain mendapatkan kebaikan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-14",
+    nomor: 14,
+    judul: "Tidak Halal Darah Seorang Muslim",
+    perawi: "Abdullah bin Mas'ud رضي الله عنه",
+    arab: "لاَ يَحِلُّ دَمُ امْرِئٍ مُسْلِمٍ",
+    terjemah: "Hadits menjelaskan perlindungan jiwa dan perkara tertentu yang disebut dalam ketentuan hukum Islam.",
+    sumber: "HR. Bukhari dan Muslim",
+    catatan: "Pembahasan hukum hadits ini berada dalam ranah hukum dan otoritas yang berwenang, bukan tindakan individu.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-15",
+    nomor: 15,
+    judul: "Barangsiapa Beriman kepada Allah dan Hari Akhir",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "فَلْيَقُلْ خَيْراً أَو لِيَصْمُتْ",
+    terjemah: "Orang beriman hendaknya berkata baik, tidak mengganggu tetangga, dan memuliakan tamu.",
+    sumber: "HR. Bukhari dan Muslim",
+    catatan: "Iman tercermin dalam perkataan, kepedulian terhadap tetangga, dan penghormatan kepada tamu.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-16",
+    nomor: 16,
+    judul: "Janganlah Engkau Marah",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "لاَ تَغْضَبْ",
+    terjemah: "Rasulullah ﷺ memberi nasihat agar tidak dikuasai amarah.",
+    sumber: "HR. Bukhari",
+    catatan: "Mengendalikan amarah membantu seseorang menjaga perkataan dan perbuatan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-17",
+    nomor: 17,
+    judul: "Kewajiban Berlaku Ihsan pada Segala Sesuatu",
+    perawi: "Syaddad bin Aus رضي الله عنه",
+    arab: "إِنَّ اللهَ كَتَبَ الإِحْسَانَ عَلَى كُلِّ شَيءٍ",
+    terjemah: "Ihsan hendaknya diterapkan dalam setiap perbuatan, termasuk ketika menangani hewan.",
+    sumber: "HR. Muslim",
+    catatan: "Melakukan sesuatu dengan baik, penuh kepedulian, dan tidak menyiksa makhluk.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-18",
+    nomor: 18,
+    judul: "Bertakwalah di Manapun Engkau Berada",
+    perawi: "Abu Dzar dan Mu'adz bin Jabal رضي الله عنهما",
+    arab: "اتَّقِ اللهَ حَيْثُمَا كُنْتَ",
+    terjemah: "Bertakwa di mana pun, menyusul kesalahan dengan kebaikan, dan bergaul dengan akhlak baik.",
+    sumber: "HR. Tirmidzi; Hasan",
+    catatan: "Kebaikan dapat menjadi sebab terhapusnya keburukan dengan izin Allah.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-19",
+    nomor: 19,
+    judul: "Jagalah Allah, Niscaya Allah Menjagamu",
+    perawi: "Abdullah bin Abbas رضي الله عنهما",
+    arab: "احْفَظِ اللهَ يَحفَظْكَ",
+    terjemah: "Menjaga perintah Allah, meminta pertolongan kepada-Nya, dan meyakini takdir-Nya.",
+    sumber: "HR. Tirmidzi 2516; Hasan Shahih",
+    catatan: "Hadits mengajarkan tawakal, keyakinan terhadap takdir, dan kesabaran dalam menghadapi kesulitan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-20",
+    nomor: 20,
+    judul: "Jika Engkau Tidak Malu, Berbuatlah Sesukamu",
+    perawi: "Abu Mas'ud Uqbah bin Amr رضي الله عنه",
+    arab: "إِذا لَم تَستَحْيِ فاصْنَعْ مَا شِئْتَ",
+    terjemah: "Rasa malu yang baik menjadi penjaga seseorang dari perbuatan tercela.",
+    sumber: "HR. Bukhari 6120",
+    catatan: "Malu kepada Allah dan manusia mendorong seseorang menjaga akhlak.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-21",
+    nomor: 21,
+    judul: "Katakan: Aku Beriman kepada Allah",
+    perawi: "Sufyan bin Abdullah رضي الله عنه",
+    arab: "قُلْ أَمَنْتُ بِاللهِ ثُمَّ اسْتَقِمْ",
+    terjemah: "Beriman kepada Allah dan tetap istiqamah dalam menjalankan ajaran.",
+    sumber: "HR. Muslim 38",
+    catatan: "Istiqamah berarti teguh dalam iman dan ketaatan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-22",
+    nomor: 22,
+    judul: "Apakah Aku Akan Masuk Al-Jannah?",
+    perawi: "Jabir bin Abdullah رضي الله عنه",
+    arab: "أَحْلَلْتُ الْحَلاَلَ وَحَرَّمْتُ الْحَرَامَ",
+    terjemah: "Menjalankan kewajiban, berpuasa Ramadhan, menghalalkan yang halal, dan menjauhi yang haram adalah jalan menuju surga.",
+    sumber: "HR. Muslim 15",
+    catatan: "Ketaatan dan menjaga batas halal-haram merupakan bagian penting dalam beragama.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-23",
+    nomor: 23,
+    judul: "Kesucian itu Separuh dari Iman",
+    perawi: "Abu Malik Al-Harits bin Ashim رضي الله عنه",
+    arab: "الطُّهُورُ شَطْرُ الإِيْمَانِ",
+    terjemah: "Bersuci, dzikir, shalat, sedekah, sabar, dan Al-Qur'an memiliki keutamaan besar.",
+    sumber: "HR. Muslim",
+    catatan: "Hadits mengingatkan bahwa amal-amal baik menjadi bekal dan petunjuk kehidupan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-24",
+    nomor: 24,
+    judul: "Janganlah Kalian Saling Menzhalimi",
+    perawi: "Abu Dzar رضي الله عنه",
+    arab: "إِنِّي حَرَّمْتُ الظُّلْمَ عَلَى نَفْسِي",
+    terjemah: "Allah mengharamkan kezaliman. Hamba membutuhkan petunjuk, rezeki, ampunan, dan pertolongan-Nya.",
+    sumber: "HR. Muslim",
+    catatan: "Hadits Qudsi mengingatkan bahwa seluruh amal manusia akan dicatat dan dibalas dengan adil.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-25",
+    nomor: 25,
+    judul: "Sedekah Tidak Hanya dengan Harta",
+    perawi: "Abu Dzar رضي الله عنه",
+    arab: "كُلُّ تَسْبِيحَةٍ صَدَقَةٌ",
+    terjemah: "Dzikir, amar makruf, menolong, dan hubungan suami istri yang halal dapat bernilai sedekah.",
+    sumber: "HR. Muslim",
+    catatan: "Kesempatan berbuat kebaikan terbuka luas, bukan hanya melalui pemberian uang.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-26",
+    nomor: 26,
+    judul: "Setiap Kebaikan adalah Sedekah",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "وَكُلُّ خُطْوَةٍ تَمْشِيْهَا إِلَى الصَّلاَةِ صَدَقَةٌ",
+    terjemah: "Mendamaikan, membantu orang, berkata baik, berjalan menuju shalat, dan menyingkirkan gangguan termasuk sedekah.",
+    sumber: "HR. Bukhari 2989 dan Muslim 1009",
+    catatan: "Sedekah memiliki banyak bentuk yang bisa dilakukan setiap hari.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-27",
+    nomor: 27,
+    judul: "Kebaikan itu adalah Akhlak yang Baik",
+    perawi: "An-Nawwas bin Sam'an dan Wabishah رضي الله عنهما",
+    arab: "اْلبِرُّ حُسْنُ الْخُلُقِ",
+    terjemah: "Kebaikan berkaitan dengan akhlak, sedangkan dosa menimbulkan kegelisahan batin dan rasa tidak ingin diketahui orang.",
+    sumber: "HR. Muslim 2553; riwayat Wabishah Hasan",
+    catatan: "Hati nurani tidak menggantikan dalil, tetapi menjadi pengingat ketika menghadapi keraguan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-28",
+    nomor: 28,
+    judul: "Mendengar dan Taat kepada Penguasa",
+    perawi: "Irbadh bin Sariyah رضي الله عنه",
+    arab: "عَلَيْكُمْ بِسُنَّتِي وَسُنَّةِ الْخُلَفَاءِ الرَّاشِدِينَ",
+    terjemah: "Berpegang pada ketakwaan, sunnah Rasulullah ﷺ, sunnah khalifah yang mendapat petunjuk, dan menghindari perkara agama yang diada-adakan.",
+    sumber: "HR. Abu Dawud 4607 dan Tirmidzi 2676",
+    catatan: "Hadits berisi wasiat untuk berpegang teguh pada sunnah ketika terjadi perselisihan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-29",
+    nomor: 29,
+    judul: "Pintu-pintu Kebaikan",
+    perawi: "Mu'adz bin Jabal رضي الله عنه",
+    arab: "رَأْسُ الأَمْرِ الإِسْلاَمُ, وَعَمُوْدُهُ الصَّلاَةُ",
+    terjemah: "Hadits menjelaskan amalan menuju surga, pintu kebaikan, kedudukan Islam dan shalat, serta pentingnya menjaga lisan.",
+    sumber: "HR. Tirmidzi; Hasan Shahih",
+    catatan: "Lisan perlu dijaga karena perkataan dapat membawa kebaikan maupun keburukan besar.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-30",
+    nomor: 30,
+    judul: "Allah Telah Menetapkan Kewajiban-kewajiban",
+    perawi: "Abu Tsa'labah Al-Khusyani رضي الله عنه",
+    arab: "إِنَّ اللهَ فَرَضَ فَرَائِضَ فَلاَ تُضَيِّعُوْهَا",
+    terjemah: "Kewajiban tidak boleh ditinggalkan, batas hukum tidak boleh dilanggar, larangan harus dijauhi, dan perkara yang didiamkan tidak perlu dipaksakan.",
+    sumber: "HR. Ad-Daruquthni dan lainnya",
+    catatan: "Ketentuan agama mengandung rahmat dan hendaknya dijalankan dengan tidak melampaui batas.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-31",
+    nomor: 31,
+    judul: "Perintah untuk Bersifat Zuhud",
+    perawi: "Sahl bin Sa'ad رضي الله عنه",
+    arab: "ازْهَدْ فِي الدُّنيَا يُحِبَّكَ اللهُ",
+    terjemah: "Tidak menjadikan dunia sebagai tujuan utama dan tidak bergantung pada apa yang dimiliki orang lain.",
+    sumber: "HR. Ibnu Majah 4102 dan lainnya; Hasan",
+    catatan: "Zuhud bukan berarti meninggalkan usaha, tetapi tidak menjadikan dunia menguasai hati.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-32",
+    nomor: 32,
+    judul: "Larangan Membahayakan Diri dan Orang Lain",
+    perawi: "Abu Sa'id Al-Khudri رضي الله عنه",
+    arab: "لاَ ضَرَرَ وَلاَ ضِرَارَ",
+    terjemah: "Tidak boleh menimbulkan bahaya bagi diri sendiri maupun orang lain.",
+    sumber: "HR. Ibnu Majah, Ad-Daruquthni, dan lainnya; Hasan",
+    catatan: "Prinsip ini menjadi dasar untuk mencegah tindakan yang merugikan dan menyakiti.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-33",
+    nomor: 33,
+    judul: "Bukti Harus Didatangkan oleh Penuduh",
+    perawi: "Abdullah bin Abbas رضي الله عنهما",
+    arab: "الْبَيِّنَةُ عَلَى الْمُدَّعِي",
+    terjemah: "Dalam perselisihan, pihak yang mengajukan klaim harus membawa bukti dan pihak yang menyangkal memiliki sumpah sesuai ketentuan.",
+    sumber: "HR. Al-Baihaqi; sebagian lafaz dalam Bukhari dan Muslim",
+    catatan: "Hadits mengajarkan keadilan, pembuktian, dan tidak mengambil hak orang lain hanya dengan tuduhan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-34",
+    nomor: 34,
+    judul: "Kewajiban Mengingkari Kemungkaran",
+    perawi: "Abu Sa'id Al-Khudri رضي الله عنه",
+    arab: "مَنْ رَأَى مِنْكُمْ مُنْكَرًا فَلْيُغَيِّرْهُ",
+    terjemah: "Kemungkaran dicegah sesuai kemampuan melalui tindakan yang berwenang, nasihat, atau pengingkaran dalam hati.",
+    sumber: "HR. Muslim 49",
+    catatan: "Mencegah kemungkaran harus memperhatikan kemampuan, ilmu, dan tidak menimbulkan kemungkaran yang lebih besar.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-35",
+    nomor: 35,
+    judul: "Sesama Muslim adalah Saudara",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "الْمُسْلِمُ أَخُو الْمُسْلِمِ",
+    terjemah: "Muslim dilarang dengki, saling membenci, menzalimi, menghina, dan melanggar hak sesama.",
+    sumber: "HR. Muslim 2564",
+    catatan: "Takwa berada di hati dan tercermin dalam penghormatan kepada sesama Muslim.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-36",
+    nomor: 36,
+    judul: "Balasan itu Sejenis dengan Amalan",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "وَاللهُ فِيْ عَوْنِ الْعَبْدِ مَا كَانَ الْعَبْدُ فِي عَوْنِ أَخِيْهِ",
+    terjemah: "Membantu kesulitan, meringankan beban, menutup aib, dan menuntut ilmu merupakan sebab datangnya pertolongan Allah.",
+    sumber: "HR. Muslim 2699",
+    catatan: "Allah menolong hamba yang berusaha menolong saudaranya dan memudahkan jalan bagi pencari ilmu.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-37",
+    nomor: 37,
+    judul: "Amalan Kebaikan Dilipatgandakan",
+    perawi: "Abdullah bin Abbas رضي الله عنهما",
+    arab: "إِنَّ اللهَ كَتَبَ الْحَسَنَاتِ وَالسَّيِّئَاتِ",
+    terjemah: "Niat kebaikan mendapat pahala, amal baik dilipatgandakan, dan dosa tidak dilipatgandakan seperti pahala kebaikan.",
+    sumber: "HR. Bukhari 6491 dan Muslim 131",
+    catatan: "Hadits menunjukkan luasnya rahmat Allah dalam memberikan pahala dan mencatat amal.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-38",
+    nomor: 38,
+    judul: "Cara Mendapatkan Kecintaan Allah",
+    perawi: "Abu Hurairah رضي الله عنه",
+    arab: "وَمَا تَقَرَّبَ إِلَيَّ عَبْدِيْ بِشَيءٍ أَحَبَّ إِلِيَّ",
+    terjemah: "Menjalankan kewajiban dan memperbanyak amalan sunnah menjadi sebab kecintaan Allah kepada hamba.",
+    sumber: "HR. Bukhari 6502",
+    catatan: "Hadits Qudsi menerangkan keutamaan wali Allah yang mendekat melalui ketaatan.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-39",
+    nomor: 39,
+    judul: "Allah Mengampuni Siapa yang Tersalah dan Lupa",
+    perawi: "Abdullah bin Abbas رضي الله عنهما",
+    arab: "إِنَّ اللهَ تَجَاوَزَ لِي عَنْ أُمَّتِي الْخَطَأَ وَالنِّسْيَانَ",
+    terjemah: "Allah memberikan ampunan kepada umat atas kesalahan yang tidak disengaja, lupa, dan perbuatan karena paksaan.",
+    sumber: "HR. Ibnu Majah 2045 dan lainnya; Hasan",
+    catatan: "Hadits menunjukkan rahmat Allah dalam keadaan manusia tidak sengaja atau terpaksa.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-40",
+    nomor: 40,
+    judul: "Jadilah di Dunia seperti Orang Asing",
+    perawi: "Abdullah bin Umar رضي الله عنهما",
+    arab: "كُنْ فِي الدُّنْيَا كَأَنَّكَ غَرِيْبٌ أَوْ عَابِرُ سَبِيْلٍ",
+    terjemah: "Jangan terlalu terikat dengan dunia dan manfaatkan waktu hidup, sehat, dan kesempatan untuk kebaikan.",
+    sumber: "HR. Bukhari 6416",
+    catatan: "Mengingat kematian mendorong seseorang memanfaatkan waktu untuk amal.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-41",
+    nomor: 41,
+    judul: "Hawa Nafsu Mengikuti Apa yang Dibawa Rasul",
+    perawi: "Abdullah bin Amr bin Al-Ash رضي الله عنهما",
+    arab: "لاَيُؤْمِنُ أَحَدُكُمْ حَتَّى يَكُونَ هَواهُ تَبَعَاً لِمَا جِئْتُ بِهِ",
+    terjemah: "Keimanan menuntut agar keinginan seseorang tunduk pada ajaran Rasulullah ﷺ.",
+    sumber: "Hadits Hasan Shahih menurut teks referensi; terdapat pembahasan ulama mengenai sanadnya",
+    catatan: "Mendahulukan tuntunan agama daripada keinginan pribadi.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
+  },
+  {
+    id: "arbain-42",
+    nomor: 42,
+    judul: "Allah Maha Pengampun",
+    perawi: "Anas bin Malik رضي الله عنه",
+    arab: "يَا ابْنَ آَدَمَ إِنَّكَ مَا دَعَوْتَنِيْ وَرَجَوْتَنِيْ غَفَرْتُ لَكَ",
+    terjemah: "Allah menjanjikan ampunan bagi hamba yang berdoa, berharap, memohon ampun, dan tidak menyekutukan-Nya.",
+    sumber: "HR. Tirmidzi 3540; Hasan Shahih",
+    catatan: "Hadits Qudsi menegaskan luasnya ampunan Allah bagi orang yang kembali kepada-Nya.",
+    url: "https://alquran-indonesia.id/42-hadist-arbain-nawawi"
   }
 ];
