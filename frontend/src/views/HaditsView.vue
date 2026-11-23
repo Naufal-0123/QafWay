@@ -461,14 +461,6 @@ onUnmounted(() => {
       </button>
 
     </div>
-
-    <!-- DESKRIPSI -->
-    <p
-      v-if="activeTab === 'arbain'"
-      class="hadits-description muted"
-    >
-      42 hadits pilihan Imam Nawawi.
-    </p>
     
     <!-- SEARCH -->
     <div class="search hadits-search">
