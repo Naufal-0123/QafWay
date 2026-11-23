@@ -529,7 +529,7 @@ function switchMode(value) {
 }
 
 /* JUDUL - TIDAK DIPOTONG */
-.hadits-card .hadits-title {
+.hadits-card .meta strong.hadits-title {
   display: block;
   width: 100%;
   min-width: 0;
@@ -538,9 +538,9 @@ function switchMode(value) {
   font-weight: 700;
   line-height: 1.65;
 
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
 
   overflow-wrap: anywhere;
   word-break: normal;
@@ -752,7 +752,7 @@ function switchMode(value) {
     gap: .45rem;
   }
 
-  .hadits-card .hadits-title {
+  .hadits-card .meta strong.hadits-title {
     font-size: .98rem;
     line-height: 1.65;
   }
@@ -806,7 +806,7 @@ function switchMode(value) {
     font-size: .95rem;
   }
 
-  .hadits-card .hadits-title {
+  .hadits-card .meta strong.hadits-title {
     font-size: .92rem;
   }
 }
