@@ -469,15 +469,7 @@ onUnmounted(() => {
     >
       42 hadits pilihan Imam Nawawi.
     </p>
-
-    <p
-      v-else
-      class="hadits-description muted"
-    >
-      Hadits pilihan dari Shahih Bukhari dan Shahih Muslim.
-      Teks Arab dan terjemahan dimuat dari API.
-    </p>
-
+    
     <!-- SEARCH -->
     <div class="search hadits-search">
       <input
