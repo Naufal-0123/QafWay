@@ -533,7 +533,7 @@ onUnmounted(() => {
 
         <!-- NOMOR -->
         <span class="num hadits-number">
-          {{ activeTab === "arbain" ? h.nomor : "★" }}
+            {{ h.nomor }}
         </span>
 
         <!-- JUDUL + PERAWI -->
