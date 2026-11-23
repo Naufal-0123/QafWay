@@ -1,21 +1,28 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { HADITS_ARBAIN } from "../data/haditsData.js";
 
-const mode = ref("arbain");
 const query = ref("");
-const arbain = ref([...HADITS_ARBAIN]);
+const arbain = ref(HADITS_ARBAIN.map((h) => ({ ...h })));
 const loading = ref(false);
 const error = ref("");
 const selected = ref(null);
 
 const API_ARBain = "https://api.myquran.com/v2/hadis/arbain/all";
 
+/* =========================================
+   HELPER
+========================================= */
+
 function pick(obj, keys, fallback = "") {
   for (const key of keys) {
     const value = obj?.[key];
 
-    if (value !== undefined && value !== null && value !== "") {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== ""
+    ) {
       return value;
     }
   }
@@ -23,7 +30,10 @@ function pick(obj, keys, fallback = "") {
   return fallback;
 }
 
-/* Normalisasi data API, terjemahan tetap menggunakan data lokal */
+/* =========================================
+   NORMALISASI DATA API
+========================================= */
+
 function normalizeArbain(item, index) {
   const data =
     item?.data && !Array.isArray(item.data)
@@ -31,33 +41,61 @@ function normalizeArbain(item, index) {
       : item;
 
   const nomor = Number(
-    pick(data, ["nomor", "no", "number"], index + 1)
+    pick(data, ["nomor", "no", "number", "id"], index + 1)
   );
 
   const local =
-    HADITS_ARBAIN.find((h) => Number(h.nomor) === nomor) || {};
+    HADITS_ARBAIN.find(
+      (h) => Number(h.nomor) === nomor
+    ) || {};
 
   return {
     ...local,
+
     id: local.id || `arbain-${nomor}`,
     nomor,
+
     judul:
       local.judul ||
-      pick(data, ["judul", "title", "nama", "name"], `Hadits ${nomor}`),
+      pick(
+        data,
+        ["judul", "title", "nama", "name"],
+        `Hadits ${nomor}`
+      ),
+
+    perawi:
+      local.perawi ||
+      pick(
+        data,
+        ["perawi", "rawi", "narrator"],
+        ""
+      ),
 
     arab:
       pick(
         data,
-        ["arab", "arabic", "teksArab", "text_ar", "hadis"],
+        [
+          "arab",
+          "arabic",
+          "teksArab",
+          "text_ar",
+          "hadis",
+          "matn",
+        ],
         ""
       ) || local.arab || "",
 
-    /* Prioritaskan terjemahan lokal */
     terjemah:
       local.terjemah ||
       pick(
         data,
-        ["terjemah", "indonesia", "translation", "arti", "text_id"],
+        [
+          "terjemah",
+          "indonesia",
+          "translation",
+          "arti",
+          "text_id",
+        ],
         ""
       ),
 
@@ -70,21 +108,27 @@ function normalizeArbain(item, index) {
       ),
 
     catatan: local.catatan || "",
-    perawi: local.perawi || "",
+    url: local.url || "",
     raw: data,
   };
 }
+
+/* =========================================
+   LOAD DATA ARBAIN
+========================================= */
 
 async function loadArbain() {
   loading.value = true;
   error.value = "";
 
-  /* Data lokal langsung tersedia meskipun API belum selesai */
+  /* Tampilkan data lokal terlebih dahulu */
   arbain.value = HADITS_ARBAIN.map((h) => ({ ...h }));
 
   try {
     const response = await fetch(API_ARBain, {
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -111,32 +155,47 @@ async function loadArbain() {
 
     list.forEach((item, index) => {
       const normalized = normalizeArbain(item, index);
-      apiMap.set(normalized.nomor, normalized);
+
+      apiMap.set(
+        Number(normalized.nomor),
+        normalized
+      );
     });
 
-    /* Gabungkan Arab dari API dan isi lokal */
+    /* Gabungkan data lokal dengan API */
     arbain.value = HADITS_ARBAIN.map((local, index) => {
       const api = apiMap.get(Number(local.nomor));
 
       return {
         ...local,
+
         id: local.id || `arbain-${index + 1}`,
         nomor: Number(local.nomor),
-        judul: local.judul,
+
+        judul: local.judul || api?.judul || "",
         perawi: local.perawi || api?.perawi || "",
+
         arab: api?.arab || local.arab || "",
-        terjemah: local.terjemah || api?.terjemah || "",
-        sumber: local.sumber || api?.sumber || "Hadits Arbain Nawawi",
+
+        terjemah:
+          local.terjemah || api?.terjemah || "",
+
+        sumber:
+          local.sumber ||
+          api?.sumber ||
+          "Hadits Arbain Nawawi",
+
         catatan: local.catatan || api?.catatan || "",
+        url: local.url || api?.url || "",
       };
     }).sort((a, b) => a.nomor - b.nomor);
 
   } catch (err) {
-    /* API gagal, data lokal tetap bisa digunakan */
+    /* Jika API gagal, data lokal tetap tersedia */
     arbain.value = HADITS_ARBAIN.map((h) => ({ ...h }));
 
     error.value =
-      "Teks Arab tambahan tidak dapat dimuat. Data lokal tetap ditampilkan.";
+      "Tidak dapat memperbarui data dari internet. Data lokal tetap ditampilkan.";
   } finally {
     loading.value = false;
   }
@@ -144,109 +203,127 @@ async function loadArbain() {
 
 onMounted(loadArbain);
 
-const currentList = computed(() =>
-  mode.value === "arbain"
-    ? arbain.value
-    : HADITS_POPULER
-);
+/* =========================================
+   SEARCH
+========================================= */
 
 const filtered = computed(() => {
-  const q = query.value.trim().toLocaleLowerCase("id");
+  const q = query.value
+    .trim()
+    .toLocaleLowerCase("id");
 
-  if (!q) return currentList.value;
+  if (!q) {
+    return arbain.value;
+  }
 
-  return currentList.value.filter((h) =>
-    [
+  return arbain.value.filter((h) => {
+    const text = [
       h.nomor,
       h.judul,
+      h.perawi,
       h.arab,
       h.terjemah,
       h.sumber,
-      h.perawi,
       h.catatan,
     ]
       .join(" ")
-      .toLocaleLowerCase("id")
-      .includes(q)
-  );
+      .toLocaleLowerCase("id");
+
+    return text.includes(q);
+  });
 });
+
+/* =========================================
+   DETAIL HADITS
+========================================= */
 
 function openHadits(h) {
   selected.value = h;
+  document.body.style.overflow = "hidden";
 }
 
 function closeHadits() {
   selected.value = null;
+  document.body.style.overflow = "";
 }
 
 function move(delta) {
   if (!selected.value) return;
 
-  const index = currentList.value.findIndex(
+  const index = arbain.value.findIndex(
     (h) => h.id === selected.value.id
   );
 
-  if (index < 0 || currentList.value.length === 0) return;
+  if (index === -1 || arbain.value.length === 0) {
+    return;
+  }
 
-  const next =
-    (index + delta + currentList.value.length) %
-    currentList.value.length;
+  const nextIndex =
+    (index + delta + arbain.value.length) %
+    arbain.value.length;
 
-  selected.value = currentList.value[next];
+  selected.value = arbain.value[nextIndex];
 }
 
-function switchMode(value) {
-  mode.value = value;
-  query.value = "";
-  selected.value = null;
+function handleKeydown(event) {
+  if (!selected.value) return;
+
+  if (event.key === "Escape") {
+    closeHadits();
+  }
+
+  if (event.key === "ArrowRight") {
+    move(1);
+  }
+
+  if (event.key === "ArrowLeft") {
+    move(-1);
+  }
 }
+
+onMounted(() => {
+  window.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeydown);
+  document.body.style.overflow = "";
+});
 </script>
 
 <template>
   <section class="hadits-page">
-    <h1>Hadits</h1>
 
-    <p class="muted hadits-intro">
-      Pelajari hadits Rasulullah ﷺ, baca teks Arab,
-      terjemahan, dan rujukannya.
-    </p>
+    <!-- =================================
+         HEADER
+    ================================== -->
 
-    <!-- KATEGORI -->
-    <div class="hadits-tabs chips">
-      <button
-        class="chip"
-        :class="{ on: mode === 'arbain' }"
-        @click="switchMode('arbain')"
-      >
-        Arbain Nawawi (42)
-      </button>
+    <header class="hadits-header">
+      <h1>Hadits</h1>
 
-      <button
-        class="chip"
-        :class="{ on: mode === 'populer' }"
-        @click="switchMode('populer')"
-      >
-        Hadits Populer Shahih
-      </button>
-    </div>
+      <p class="muted hadits-intro">
+        Pelajari hadits Rasulullah ﷺ, baca teks Arab,
+        terjemahan, dan penjelasannya.
+      </p>
+    </header>
 
-    <!-- PENCARIAN -->
+    <!-- =================================
+         SEARCH
+    ================================== -->
+
     <div class="search hadits-search">
       <input
         v-model="query"
         class="input"
         type="search"
-        :placeholder="
-          mode === 'arbain'
-            ? 'Cari hadits Arbain...'
-            : 'Cari hadits populer...'
-        "
+        placeholder="Cari hadits, judul, atau perawi..."
         aria-label="Cari hadits"
       />
 
       <button
         v-if="query"
-        class="clear"
+        class="hadits-clear"
+        type="button"
         aria-label="Hapus pencarian"
         @click="query = ''"
       >
@@ -254,27 +331,40 @@ function switchMode(value) {
       </button>
     </div>
 
-    <p class="muted hadits-count">
-      Menampilkan {{ filtered.length }} hadits
-    </p>
+    <div class="hadits-info">
+      <span class="muted">
+        {{ filtered.length }} hadits
+      </span>
 
-    <!-- STATUS -->
-    <div
-      v-if="loading && mode === 'arbain'"
-      class="hadits-status muted"
-    >
-      Memperbarui teks Arab...
+      <span
+        v-if="loading"
+        class="hadits-loading muted"
+      >
+        Memuat...
+      </span>
     </div>
 
-    <div
-      v-if="error && mode === 'arbain'"
-      class="hadits-status muted"
+    <p
+      v-if="error"
+      class="hadits-error muted"
     >
       {{ error }}
-    </div>
+    </p>
 
-    <!-- LIST -->
+    <!-- =================================
+         CARD LIST
+
+         CARD HANYA MENAMPILKAN:
+         1. NOMOR
+         2. JUDUL
+         3. PERAWI
+
+         ARAB DAN TERJEMAHAN TIDAK DITAMPILKAN
+         DI CARD AWAL.
+    ================================== -->
+
     <div class="hadits-list">
+
       <button
         v-for="h in filtered"
         :key="h.id"
@@ -282,49 +372,65 @@ function switchMode(value) {
         type="button"
         @click="openHadits(h)"
       >
+
+        <!-- NOMOR -->
         <span class="num hadits-number">
           {{ h.nomor }}
         </span>
 
+        <!-- JUDUL + PERAWI -->
         <span class="meta hadits-meta">
+
           <strong class="hadits-title">
             {{ h.judul }}
           </strong>
 
-          <small class="hadits-source">
-            {{ h.sumber || "Hadits" }}
+          <small class="hadits-perawi">
+            {{ h.perawi || "Perawi tidak tersedia" }}
           </small>
+
         </span>
 
-        <span
-          class="arab-name hadits-card-arab"
-          dir="rtl"
-          lang="ar"
-        >
-          {{ h.arab || "حديث" }}
-        </span>
       </button>
 
+      <!-- KOSONG -->
       <div
-        v-if="!filtered.length"
-        class="card hadits-message"
+        v-if="filtered.length === 0"
+        class="card hadits-empty"
       >
-        Hadits tidak ditemukan.
+        <p>
+          Hadits tidak ditemukan.
+        </p>
+
+        <button
+          class="btn"
+          type="button"
+          @click="query = ''"
+        >
+          Hapus pencarian
+        </button>
       </div>
+
     </div>
 
-    <!-- DETAIL -->
+    <!-- =================================
+         MODAL DETAIL
+    ================================== -->
+
     <div
       v-if="selected"
       class="hadits-overlay"
       @click.self="closeHadits"
     >
+
       <article
         class="hadits-detail"
         role="dialog"
         aria-modal="true"
         :aria-label="selected.judul"
       >
+
+        <!-- TOMBOL TUTUP -->
         <button
           class="hadits-close"
           type="button"
@@ -334,68 +440,122 @@ function switchMode(value) {
           ✕
         </button>
 
+        <!-- HEADER DETAIL -->
         <header class="hadits-detail-header">
+
           <span class="hadits-label">
-            {{
-              mode === "arbain"
-                ? "Arbain Nawawi"
-                : "Hadits Populer"
-            }}
-            · Hadits {{ selected.nomor }}
+            Arbain Nawawi · Hadits {{ selected.nomor }}
           </span>
 
-          <h2>{{ selected.judul }}</h2>
+          <h2>
+            {{ selected.judul }}
+          </h2>
 
           <p
             v-if="selected.perawi"
-            class="hadits-perawi muted"
+            class="hadits-detail-perawi muted"
           >
-            Perawi: {{ selected.perawi }}
+            Perawi:
+            {{ selected.perawi }}
           </p>
+
         </header>
 
-        <!-- ARAB -->
-        <div
-          class="hadits-arab"
-          dir="rtl"
-          lang="ar"
-        >
-          {{
-            selected.arab ||
-            "Teks Arab belum tersedia."
-          }}
+        <!-- =================================
+             TEKS ARAB
+        ================================== -->
+
+        <div class="hadits-arab-box">
+
+          <h3 class="hadits-section-title">
+            Teks Hadits
+          </h3>
+
+          <div
+            class="hadits-arab"
+            dir="rtl"
+            lang="ar"
+          >
+            {{
+              selected.arab ||
+              "Teks Arab belum tersedia."
+            }}
+          </div>
+
         </div>
 
-        <!-- TERJEMAHAN -->
-        <h3>Terjemahan</h3>
+        <!-- =================================
+             TERJEMAHAN
+        ================================== -->
 
-        <p class="hadits-translation">
-          {{
-            selected.terjemah ||
-            "Terjemahan belum tersedia dalam data."
-          }}
-        </p>
+        <section class="hadits-section">
 
-        <!-- CATATAN -->
-        <template v-if="selected.catatan">
-          <h3>Penjelasan</h3>
+          <h3 class="hadits-section-title">
+            Terjemahan
+          </h3>
+
+          <p class="hadits-translation">
+            {{
+              selected.terjemah ||
+              "Terjemahan belum tersedia dalam data."
+            }}
+          </p>
+
+        </section>
+
+        <!-- =================================
+             CATATAN
+        ================================== -->
+
+        <section
+          v-if="selected.catatan"
+          class="hadits-section"
+        >
+
+          <h3 class="hadits-section-title">
+            Penjelasan
+          </h3>
 
           <p class="hadits-translation">
             {{ selected.catatan }}
           </p>
-        </template>
 
-        <!-- RUJUKAN -->
-        <h3>Rujukan</h3>
+        </section>
 
-        <p class="hadits-reference">
-          {{ selected.sumber || "Rujukan belum tersedia." }}
-        </p>
+        <!-- =================================
+             RUJUKAN
+        ================================== -->
 
-        <!-- NAVIGASI -->
-        <div class="hadits-detail-actions">
+        <section class="hadits-section">
+
+          <h3 class="hadits-section-title">
+            Rujukan
+          </h3>
+
+          <div class="hadits-reference">
+            {{ selected.sumber || "Rujukan belum tersedia." }}
+          </div>
+
+          <a
+            v-if="selected.url"
+            class="hadits-source-link"
+            :href="selected.url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Baca sumber →
+          </a>
+
+        </section>
+
+        <!-- =================================
+             NAVIGASI
+        ================================== -->
+
+        <footer class="hadits-detail-actions">
+
           <button
-            class="btn"
+            class="btn hadits-nav-btn"
             type="button"
             @click="move(-1)"
           >
@@ -403,7 +563,7 @@ function switchMode(value) {
           </button>
 
           <button
-            class="btn primary"
+            class="btn primary hadits-nav-btn"
             type="button"
             @click="closeHadits"
           >
@@ -411,19 +571,27 @@ function switchMode(value) {
           </button>
 
           <button
-            class="btn"
+            class="btn hadits-nav-btn"
             type="button"
             @click="move(1)"
           >
             Berikutnya →
           </button>
-        </div>
+
+        </footer>
+
       </article>
+
     </div>
+
   </section>
 </template>
 
 <style scoped>
+/* =========================================
+   PAGE
+========================================= */
+
 .hadits-page {
   width: 100%;
   max-width: 1100px;
@@ -431,22 +599,24 @@ function switchMode(value) {
   margin: 0 auto;
 }
 
+.hadits-header {
+  margin-bottom: 1rem;
+}
+
 .hadits-intro {
   margin: -.3rem 0 1rem;
   line-height: 1.7;
 }
 
-.hadits-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-  margin: .7rem 0 1rem;
-}
+/* =========================================
+   SEARCH
+========================================= */
 
 .hadits-search {
   position: relative;
+  width: 100%;
   min-width: 0;
-  margin-bottom: .5rem;
+  margin-bottom: .6rem;
 }
 
 .hadits-search .input {
@@ -455,60 +625,94 @@ function switchMode(value) {
   padding-right: 3rem;
 }
 
-.hadits-search .clear {
+.hadits-clear {
   position: absolute;
   top: 50%;
   right: .35rem;
   transform: translateY(-50%);
-  min-width: 44px;
-  min-height: 44px;
+
+  width: 42px;
+  height: 42px;
+
   border: 0;
   background: transparent;
   color: var(--muted);
+
   cursor: pointer;
 }
 
-.hadits-count {
-  margin: .3rem 0 .8rem;
+.hadits-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+
+  margin: .4rem 0 .9rem;
   font-size: .85rem;
 }
 
-.hadits-status {
-  margin: .5rem 0;
+.hadits-error {
+  margin: .4rem 0 .8rem;
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+.hadits-loading {
   font-size: .8rem;
 }
 
-/* CARD LIST */
+/* =========================================
+   LIST GRID
+========================================= */
+
 .hadits-list {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(min(100%, 310px), 1fr)
-  );
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(min(100%, 310px), 1fr)
+    );
+
   gap: .85rem;
   min-width: 0;
 }
 
+/* =========================================
+   CARD
+
+   Card hanya menampilkan nomor,
+   judul dan perawi.
+========================================= */
+
 .hadits-card {
   width: 100%;
   min-width: 0;
-  min-height: 125px;
+
+  min-height: 105px;
   height: auto;
+
   padding: 1.15rem;
+
   box-sizing: border-box;
 
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
+
   gap: 1rem;
 
   text-align: left;
   font: inherit;
+
   cursor: pointer;
 }
 
 /* NOMOR */
+
 .hadits-number {
   flex: 0 0 2.8rem;
+
   width: 2.8rem;
   height: 2.8rem;
 
@@ -517,21 +721,31 @@ function switchMode(value) {
   justify-content: center;
 }
 
-/* AREA JUDUL */
+/* AREA JUDUL DAN PERAWI */
+
 .hadits-meta {
   flex: 1 1 auto;
+
   width: 0;
   min-width: 0;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
   gap: .5rem;
 }
 
-/* Override CSS global surah-card */
+/* =========================================
+   JUDUL
+
+   Override CSS global card surah.
+   Judul tidak dipotong.
+========================================= */
+
 .hadits-card .meta strong.hadits-title {
   display: block !important;
+
   width: 100% !important;
   height: auto !important;
   max-height: none !important;
@@ -541,6 +755,7 @@ function switchMode(value) {
   line-height: 1.65;
 
   white-space: normal !important;
+
   overflow: visible !important;
   text-overflow: clip !important;
 
@@ -552,33 +767,31 @@ function switchMode(value) {
   -webkit-box-orient: unset !important;
 }
 
-/* SUMBER */
-.hadits-card .hadits-source {
+/* =========================================
+   PERAWI
+========================================= */
+
+.hadits-card .hadits-perawi {
   display: block !important;
+
   width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
 
   color: var(--muted);
-  font-size: .78rem;
-  line-height: 1.5;
+
+  font-size: .8rem;
+  line-height: 1.6;
 
   white-space: normal !important;
+
   overflow: visible !important;
   text-overflow: clip !important;
+
   overflow-wrap: anywhere;
 }
 
-/* ARAB CARD */
-.hadits-card-arab {
-  flex: 0 0 auto;
-  max-width: 25%;
-  font-size: 1.2rem;
-  line-height: 1.7;
-  text-align: right;
-
-  white-space: normal;
-  overflow: visible;
-  overflow-wrap: anywhere;
-}
+/* CARD HOVER */
 
 .hadits-card:hover {
   border-color: var(--primary);
@@ -588,37 +801,52 @@ function switchMode(value) {
   transform: scale(.98);
 }
 
-.hadits-message {
-  padding: 1rem;
+/* EMPTY */
+
+.hadits-empty {
+  padding: 1.2rem;
   text-align: center;
 }
 
-/* MODAL */
+/* =========================================
+   OVERLAY
+========================================= */
+
 .hadits-overlay {
   position: fixed;
-  z-index: 70;
+  z-index: 100;
+
   inset: 0;
 
   display: grid;
   place-items: center;
 
   padding: 12px;
+
   box-sizing: border-box;
+
   overflow: hidden;
 
   background: rgba(0, 0, 0, .5);
 }
 
+/* =========================================
+   MODAL
+========================================= */
+
 .hadits-detail {
   position: relative;
 
   width: min(100%, 780px);
+
   height: min(94dvh, 100%);
   max-height: 94dvh;
+
   min-height: 0;
 
   overflow-y: auto;
   overflow-x: hidden;
+
   overscroll-behavior: contain;
 
   scrollbar-width: none;
@@ -629,7 +857,9 @@ function switchMode(value) {
 
   border: 1px solid var(--border);
   border-radius: 22px;
+
   padding: 1.2rem;
+
   box-sizing: border-box;
 }
 
@@ -643,11 +873,17 @@ function switchMode(value) {
   box-sizing: border-box;
 }
 
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
 .hadits-close {
   position: sticky;
+
   float: right;
+
   top: 0;
-  z-index: 2;
+  z-index: 5;
 
   width: 40px;
   height: 40px;
@@ -657,86 +893,178 @@ function switchMode(value) {
 
   background: var(--primary-soft);
   color: var(--text);
+
   cursor: pointer;
 }
 
+/* =========================================
+   HEADER MODAL
+========================================= */
+
 .hadits-detail-header {
-  padding: .2rem 2.6rem .7rem 0;
+  padding: .2rem 2.6rem .8rem 0;
 }
 
 .hadits-label {
   color: var(--muted);
   font-size: .85rem;
+  line-height: 1.6;
 }
 
 .hadits-detail-header h2 {
   margin: .5rem 0;
+
   font-size: 1.35rem;
   line-height: 1.7;
+
+  white-space: normal;
   overflow-wrap: anywhere;
 }
 
-.hadits-perawi {
+.hadits-detail-perawi {
   font-size: .85rem;
+  line-height: 1.7;
+}
+
+/* =========================================
+   SECTION TITLE
+========================================= */
+
+.hadits-section-title {
+  margin: 1.1rem 0 .6rem;
+
+  color: var(--primary);
+
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* =========================================
+   ARABIC TEXT
+========================================= */
+
+.hadits-arab-box {
+  width: 100%;
+  min-width: 0;
 }
 
 .hadits-arab {
-  padding: 1rem;
+  width: 100%;
+
+  padding: 1.1rem;
+
   margin: .5rem 0 1.3rem;
 
   background: var(--primary-soft);
+
   border-radius: 14px;
 
   font-size: clamp(1.6rem, 4vw, 2.2rem);
-  line-height: 2.1;
+  line-height: 2.15;
+
   text-align: right;
 
+  white-space: normal;
   overflow-wrap: anywhere;
+  word-break: normal;
 }
 
-.hadits-detail h3 {
-  margin: 1.1rem 0 .5rem;
-  color: var(--primary);
-  font-size: 1rem;
+/* =========================================
+   TRANSLATION
+
+   RATA KANAN KIRI
+========================================= */
+
+.hadits-section {
+  width: 100%;
+  min-width: 0;
 }
 
-.hadits-translation,
-.hadits-reference {
+.hadits-translation {
   margin: .4rem 0;
+
+  font-size: 1rem;
   line-height: 1.9;
 
   text-align: justify;
   text-justify: inter-word;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* =========================================
+   REFERENCE
+========================================= */
+
+.hadits-reference {
+  width: 100%;
+
+  padding: .8rem;
+
+  margin: .4rem 0;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  font-size: .9rem;
+  line-height: 1.7;
+
   overflow-wrap: anywhere;
 }
 
-.hadits-reference {
-  padding: .8rem;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+.hadits-source-link {
+  display: inline-block;
+
+  margin-top: .6rem;
+
+  color: var(--primary);
+
+  font-size: .9rem;
+  font-weight: 600;
+
+  text-decoration: none;
 }
+
+.hadits-source-link:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   NAVIGATION BUTTONS
+========================================= */
 
 .hadits-detail-actions {
   display: flex;
+
   flex-wrap: wrap;
+
   justify-content: space-between;
+
   gap: .5rem;
-  margin-top: 1.4rem;
+
+  margin-top: 1.5rem;
 }
 
-.hadits-detail-actions .btn {
-  flex: 1;
+.hadits-nav-btn {
+  flex: 1 1 0;
   min-width: 95px;
 }
 
-/* MOBILE */
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 480px) {
   .hadits-list {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .hadits-card {
-    min-height: 115px;
+    min-height: 100px;
+
     gap: .7rem;
     padding: 1rem;
   }
@@ -748,11 +1076,11 @@ function switchMode(value) {
 
   .hadits-card .meta strong.hadits-title {
     font-size: .98rem;
+    line-height: 1.65;
   }
 
-  .hadits-card-arab {
-    max-width: 23%;
-    font-size: 1.05rem;
+  .hadits-card .hadits-perawi {
+    font-size: .75rem;
   }
 
   .hadits-overlay {
@@ -761,21 +1089,47 @@ function switchMode(value) {
 
   .hadits-detail {
     width: 100%;
+
     height: 96dvh;
     max-height: 96dvh;
+
     padding: .9rem;
+
     border-radius: 17px;
+  }
+
+  .hadits-detail-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .hadits-arab {
+    padding: .85rem;
+
+    font-size: 1.65rem;
+    line-height: 2;
+  }
+
+  .hadits-translation {
+    font-size: .95rem;
+    line-height: 1.85;
   }
 
   .hadits-detail-actions {
     gap: .4rem;
   }
 
-  .hadits-detail-actions .btn {
-    padding: .65rem .5rem;
+  .hadits-nav-btn {
+    min-width: 0;
+
+    padding: .65rem .45rem;
+
     font-size: .8rem;
   }
 }
+
+/* =========================================
+   HP KECIL
+========================================= */
 
 @media (max-width: 360px) {
   .hadits-card {
@@ -785,17 +1139,27 @@ function switchMode(value) {
 
   .hadits-number {
     flex-basis: 2.35rem;
+
     width: 2.35rem;
     height: 2.35rem;
   }
 
-  .hadits-card-arab {
-    max-width: 20%;
-    font-size: .95rem;
-  }
-
   .hadits-card .meta strong.hadits-title {
     font-size: .92rem;
+  }
+
+  .hadits-card .hadits-perawi {
+    font-size: .72rem;
+  }
+
+  .hadits-detail-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hadits-detail-actions .hadits-nav-btn:nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 }
 </style>
