@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { HADITS_POPULER } from "../data/haditsData";
+import { HADITS_POPULER } from "../data/haditsData.js";
 
 const mode = ref("arbain");
 const query = ref("");
